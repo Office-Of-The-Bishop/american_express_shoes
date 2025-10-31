@@ -201,10 +201,10 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         />
                       </div>
 
-                      {/* Delivery Location Input */}
+                      {/* Delivery Location Input */} 
                       {orderMode === 'delivery' && (
                         <div className="space-y-2">
-                          <Label htmlFor="deliveryLocation">Delivery Location</Label>
+                          <Label htmlFor="deliveryLocation">Delivery Location </Label>
                           <Input
                             id="deliveryLocation"
                             value={location}
