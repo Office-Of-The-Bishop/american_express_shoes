@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { Minus, Plus, Trash2 } from 'lucide-react';
+import { Minus, Plus, Trash2, MapPin, Clock } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Sheet,
@@ -31,6 +31,8 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   const navigate = useNavigate();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState('');
+  const [orderMode, setOrderMode] = useState<'pickup' | 'delivery'>('pickup');
+  const [location, setDeliveryLocation] = useState('');
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,7 +49,9 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
       items: cart,
       total,
       orderId,
-      date: new Date().toLocaleDateString()
+      date: new Date().toLocaleDateString().replace(/\//g, "-"),
+      orderMode,
+      ...(orderMode === 'delivery' && { location })
     };
 
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -55,7 +59,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
     localStorage.setItem('orders', JSON.stringify(orders));
     localStorage.setItem("order",JSON.stringify(order))
 
-    const response = await axios.post("/initiate-payment",{email:"jamesewoenam7@gmail.com", amount:order.total})
+    const response = await axios.post("/initiate-payment",{email:"boxbreakerglobal@gmail.com", amount:order.total})
 
     const data = response.data
     localStorage.setItem("reference", data.data.reference )
@@ -100,9 +104,9 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                 {cart.map((item, index) => (
                   <Card key={item.id || item.name || index}>
                     <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      {item.image && (
+                      {item.images.length>=1 && (
                         <img 
-                          src={item.image} 
+                          src={item.images[0]} 
                           alt={item.name}
                           className="w-full sm:w-24 h-48 sm:h-24 object-cover rounded"
                         />
@@ -152,6 +156,31 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                   </CardHeader>
                   <CardContent>
                     <form onSubmit={handleCheckout} className="space-y-4">
+                      {/* Order Mode Selection */}
+                      <div className="space-y-2">
+                        <Label className="text-base font-semibold">Order Mode</Label>
+                        <div className="flex gap-4">
+                          <Button
+                            type="button"
+                            variant={orderMode === 'pickup' ? 'default' : 'outline'}
+                            className="flex-1"
+                            onClick={() => setOrderMode('pickup')}
+                          >
+                            <MapPin className="mr-2 h-4 w-4" />
+                            Pickup
+                          </Button>
+                          <Button
+                            type="button"
+                            variant={orderMode === 'delivery' ? 'default' : 'outline'}
+                            className="flex-1"
+                            onClick={() => setOrderMode('delivery')}
+                          >
+                            <Clock className="mr-2 h-4 w-4" />
+                            Delivery
+                          </Button>
+                        </div>
+                      </div>
+
                       <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
                         <Input
@@ -171,6 +200,20 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                           required
                         />
                       </div>
+
+                      {/* Delivery Location Input */}
+                      {orderMode === 'delivery' && (
+                        <div className="space-y-2">
+                          <Label htmlFor="deliveryLocation">Delivery Location</Label>
+                          <Input
+                            id="deliveryLocation"
+                            value={location}
+                            onChange={(e) => setDeliveryLocation(e.target.value)}
+                            placeholder="Enter your delivery address"
+                            required={orderMode === 'delivery'}
+                          />
+                        </div>
+                      )}
                       
                       <div className="border-t pt-4 mt-4">
                         <div className="flex justify-between text-lg font-bold mb-4">

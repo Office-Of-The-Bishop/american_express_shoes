@@ -4,7 +4,9 @@ import { ProductCard } from '@/components/ProductCard';
 import { useCart } from '@/hooks/useCart';
 import { Button } from '@/components/ui/button';
 import { ArrowRight } from 'lucide-react';
+import { Product } from '@/types/product';
 import axios from 'axios';
+import { useToast } from '@/hooks/use-toast';
 import heroBanner from '@/assets/hero-banner.png';
 import {
   Select,
@@ -13,11 +15,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-
+import { ProductDetailsModal } from '@/components/ProductDetailsModal';
 const Index = () => {
   const { addToCart } = useCart();
+  const { toast } = useToast();
   const [selectedGender, setSelectedGender] = useState<string>('all');
   const [selectedShoeType, setSelectedShoeType] = useState<string>('all');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
   const [shoes, setShoes] = useState<any[]>([]);
 
   useEffect(() => {
@@ -38,11 +43,24 @@ const Index = () => {
     document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const handleProductClick = (product: Product) => {
+    setSelectedProduct(product);
+    setModalOpen(true);
+  };
+
+  const handleAddToCart = (product: Product) => {
+    addToCart(product);
+    toast({
+      title: "Added to cart",
+      description: `${product.name} has been added to your cart.`,
+    });
+  };
+
   const apiProducts = shoes.map((item: any, index: number) => ({
     id: `${item?.name ?? 'item'}-${index}`,
     name: item?.name,
     description: item?.description,
-    image: item?.image,
+    images: item?.images,
     price: item?.cost,
     gender: item?.Gender ?? 'Unisex',
     shoeType: item?.type ?? 'Casual',
@@ -59,25 +77,16 @@ const Index = () => {
     <div className="min-h-screen bg-background">
       <Navbar />
       
-      {/* Hero Section */}
-      <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden pt-16">
+     {/* Hero Section */}
+      <section className="relative h-screen flex items-end justify-center overflow-hidden pt-16">
         <div 
-          className="absolute inset-0 bg-cover bg-center"
+          className="absolute inset-0 top-0 bg-contain bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${heroBanner})`,
           }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/60 to-black/40" />
-        </div>
+        />
         
-        <div className="relative z-10 container mx-auto px-4 text-left max-w-2xl py-12">
-          <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold mb-6 leading-tight text-white drop-shadow-lg">
-            Step Into
-            <span className="block text-white">Luxury</span>
-          </h1>
-          <p className="text-base sm:text-xl text-white/90 mb-8 max-w-lg drop-shadow-md">
-            Discover our curated collection of premium footwear crafted for those who appreciate the finer things.
-          </p>
+        <div className="relative z-10 container mx-auto px-4 text-center pb-12 sm:pb-16 mb-12">
           <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8" onClick={scrollToProducts}>
             Explore Collection
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -127,17 +136,25 @@ const Index = () => {
             </div>
           </div>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {filteredProducts.map((product) => (
               <ProductCard 
                 key={product.id} 
                 product={product} 
-                onAddToCart={addToCart}
+                onProductClick={handleProductClick}
               />
             ))}
           </div>
         </div>
       </section>
+
+        {/* Product Details Modal */}
+      <ProductDetailsModal
+        product={selectedProduct}
+        open={modalOpen}
+        onOpenChange={setModalOpen}
+        onAddToCart={handleAddToCart}
+      />
 
       {/* Footer */}
       <footer className="bg-card border-t py-8">
@@ -147,6 +164,14 @@ const Index = () => {
           <p className="mt-1 text-xs sm:text-sm max-w-3xl mx-auto">
             AmericanShoes.com is a brand of Box Breaker Global. All online payments are securely processed through Box Breaker Global’s verified Paystack merchant account.
           </p>
+          <a 
+            href="https://american-shoe-express-admin.vercel.app/login" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="text-primary hover:underline text-sm"
+          >
+            Admin
+          </a>
         </div>
       </footer>
     </div>

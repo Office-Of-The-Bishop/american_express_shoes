@@ -66,9 +66,9 @@ export default function Cart() {
                 {cart.map((item, index) => (
                   <Card key={item.id || item.name || index}>
                     <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      {item.image && (
+                      {item.images.length>=1 && (
                         <img 
-                          src={item.image} 
+                          src={item.images[0]} 
                           alt={item.name}
                           className="w-full sm:w-24 h-48 sm:h-24 object-cover rounded"
                         />
