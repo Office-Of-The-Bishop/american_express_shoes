@@ -76,18 +76,18 @@ const Index = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <Navbar />
+      <Navbar  />
       
      {/* Hero Section */}
-      <section className="relative h-screen flex items-end justify-center overflow-hidden pt-16">
+      <section className=" mt-0 relative h-screen flex items-end justify-center overflow-hidden">
         <div 
-          className="absolute inset-0 top-0 bg-contain bg-center bg-no-repeat"
+          className="absolute top inset-0 bg-contain bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${heroBanner})`,
           }}
         />
         
-        <div className="relative z-10 container mx-auto px-4 text-center pb-12 sm:pb-16 mb-12">
+        <div className="relative z-10 container mx-auto px-4 text-center pb-12 sm:pb-16 mb-4">
           <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8" onClick={scrollToProducts}>
             Explore Collection
             <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
@@ -96,7 +96,7 @@ const Index = () => {
       </section>
 
       {/* Products Section */}
-      <section id="products" className="py-12 sm:py-20 px-4 bg-muted/30">
+      <section id="products" className="pt-4 pb-12 sm:pb-20 px-4 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Featured Collection</h2>
