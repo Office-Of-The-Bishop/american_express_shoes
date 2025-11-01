@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProductDetailsModal } from '@/components/ProductDetailsModal';
+import { Link } from 'react-router-dom';
 const Index = () => {
   const { addToCart } = useCart();
   const { toast } = useToast();
@@ -172,6 +173,7 @@ const Index = () => {
           >
             Admin
           </a>
+          <Link to={"/disclaimer"}>Disclaimer</Link>
         </div>
       </footer>
     </div>

@@ -9,6 +9,7 @@ import Cart from "./pages/Cart";
 import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 import PaymentCallback from "./pages/VerifyPayment";
+import Disclaimer from "./pages/Disclaimer";
 
 import axios from "axios"
 
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/cart" element={<Cart />} />
             <Route path="/auth" element={<Auth />} />
             <Route path="/verify-payment" element={<PaymentCallback />} />
+            <Route path="/disclaimer" element={<Disclaimer/>}/>
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
