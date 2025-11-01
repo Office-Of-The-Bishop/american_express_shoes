@@ -165,6 +165,7 @@ const Index = () => {
           <p className="mt-1 text-xs sm:text-sm max-w-3xl mx-auto">
             AmericanShoes.com is a brand of Box Breaker Global. All online payments are securely processed through Box Breaker Global’s verified Paystack merchant account.
           </p>
+          <p>American Shoe Express. Move Like You Mean It!</p>
           <a 
             href="https://american-shoe-express-admin.vercel.app/login" 
             target="_blank" 
