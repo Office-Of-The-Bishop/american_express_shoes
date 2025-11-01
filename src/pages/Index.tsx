@@ -75,7 +75,7 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen p-0 bg-background">
       <Navbar  />
       
      {/* Hero Section */}

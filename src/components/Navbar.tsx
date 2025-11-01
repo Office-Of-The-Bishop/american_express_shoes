@@ -19,8 +19,8 @@ export const Navbar = () => {
 
   return (
     <nav className="top-0 w-full z-50">
-      <div className="container mx-auto px-4 h-1 flex items-center justify-between">
-        <Link to="/" className="items-center h-[30%] mt-5 gap-3">
+      <div className="container mx-auto px-1 h-1 flex items-center justify-between">
+        <Link to="/" className="items-center h-4 mt-5 gap-3">
           <img src={logo} alt="American Shoe Express" className="h-[240%] w-[240%] sm:h-20" />
           {/* <span className="text-[#0f2942] font-bold text-xl hidden sm:inline">American Shoe Express</span> */}
         </Link>

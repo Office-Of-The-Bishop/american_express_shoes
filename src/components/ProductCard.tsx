@@ -26,7 +26,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
         <h3 className="font-semibold text-lg mb-1">{product.name}</h3>
         <p className="text-sm text-muted-foreground mb-2">{product.description}</p>
         <div className="flex items-center justify-between mb-3">
-          <p className="text-2xl font-bold text-accent">${product.price}</p>
+          <p className="text-2xl font-bold text-accent">₵{product.price}</p>
           <p className="text-sm text-muted-foreground">Stock: {product.quantity}</p>
         </div>
         <Button 
