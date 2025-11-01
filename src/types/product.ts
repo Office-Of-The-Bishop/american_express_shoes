@@ -5,8 +5,14 @@ export interface Product {
   images?: [string];
   description: string;
   quantity: number;
-  gender: string;
-  shoeType: string;
+  gender: [string];
+  shoeType: [string];
+  AmericanSize:String;
+  GhanaianSize:String;
+  retailCost:String,
+  shoeStatus:[String],
+  itemNumber:String
+
 }
 
 export interface CartItem extends Product {

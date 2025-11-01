@@ -7,7 +7,7 @@ import { ArrowRight } from 'lucide-react';
 import { Product } from '@/types/product';
 import axios from 'axios';
 import { useToast } from '@/hooks/use-toast';
-import heroBanner from '@/assets/hero-banner.png';
+import heroBanner from '@/assets/American Shoe Logo Hero.png';
 import {
   Select,
   SelectContent,
@@ -16,6 +16,26 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ProductDetailsModal } from '@/components/ProductDetailsModal';
+
+import Logo from "../assets/American Shoe Logo - transparent.png";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import shoeSize from "../assets/Shoe Size.png"
+
+
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Label } from "@/components/ui/label";
+// import { Button } from "@/components/ui/button";
+
+
+
+// import logo "../assets/American Shoe Logo - transparent.png";
 import { Link } from 'react-router-dom';
 const Index = () => {
   const { addToCart } = useCart();
@@ -64,8 +84,14 @@ const Index = () => {
     images: item?.images,
     price: item?.cost,
     gender: item?.Gender ?? 'Unisex',
-    shoeType: item?.type ?? 'Casual',
+    shoeType: item?.type ?? ['Card'],
     quantity: item?.quantity ?? 0,
+    shoeStatus:item?.shoeStatus,
+    AmericanSize:item?.size,
+    GhanaianSize:item?.GhanaianSize,
+    retailCost:item?.retailCost,
+    itemNumber:item?.itemNumber
+
   }));
 
   const filteredProducts = apiProducts.filter((product: any) => {
@@ -75,69 +101,29 @@ const Index = () => {
   });
 
   return (
-    <div className="min-h-screen p-0 bg-background">
+    <div className="min-h-screen bg-background">
       <Navbar  />
       
      {/* Hero Section */}
-      <section className=" mt-0 relative h-screen flex items-end justify-center overflow-hidden">
-        <div 
-          className="absolute top inset-0 bg-contain bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${heroBanner})`,
-          }}
+    <section className="relative overflow-hidden">
+        <img
+          src={heroBanner}
+          alt="Hero"
+          className="w-full h-auto block"
         />
-        
-        <div className="relative z-10 container mx-auto px-4 text-center pb-12 sm:pb-16 mb-4">
-          <Button size="lg" className="text-base sm:text-lg px-6 sm:px-8" onClick={scrollToProducts}>
-            Explore Collection
-            <ArrowRight className="ml-2 h-4 w-4 sm:h-5 sm:w-5" />
-          </Button>
-        </div>
       </section>
 
       {/* Products Section */}
-      <section id="products" className="pt-4 pb-12 sm:pb-20 px-4 bg-muted/30">
+      <section id="products" className=" relative mt-[40px] sm:pb-20 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Featured Collection</h2>
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">Browse our Collection and Walk Good</h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto px-4">
-              Each pair is meticulously crafted to perfection, combining timeless design with modern comfort.
+              Shoes that feel good, look good, and do good!
             </p>
           </div>
-
-          {/* Filters */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-8 max-w-2xl mx-auto">
-            <div className="flex-1">
-              <Select value={selectedGender} onValueChange={setSelectedGender}>
-                <SelectTrigger className="w-full bg-background">
-                  <SelectValue placeholder="Filter by Gender" />
-                </SelectTrigger>
-                <SelectContent className="bg-background z-50">
-                  <SelectItem value="all">All Genders</SelectItem>
-                  <SelectItem value="Men">Men</SelectItem>
-                  <SelectItem value="Women">Women</SelectItem>
-                  <SelectItem value="Unisex">Unisex</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex-1">
-              <Select value={selectedShoeType} onValueChange={setSelectedShoeType}>
-                <SelectTrigger className="w-full bg-background">
-                  <SelectValue placeholder="Filter by Shoe Type" />
-                </SelectTrigger>
-                <SelectContent className="bg-background z-50">
-                  <SelectItem value="all">All Types</SelectItem>
-                  <SelectItem value="Formal">Formal</SelectItem>
-                  <SelectItem value="Casual">Casual</SelectItem>
-                  <SelectItem value="Sneakers">Sneakers</SelectItem>
-                  <SelectItem value="Sports">Sports</SelectItem>
-                  <SelectItem value="Boots">Boots</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
           
-           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+           <div className="flex gap-5">
             {filteredProducts.map((product) => (
               <ProductCard 
                 key={product.id} 
@@ -158,27 +144,255 @@ const Index = () => {
       />
 
       {/* Footer */}
-      <footer className="bg-card border-t py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p className="text-sm sm:text-base">© 2024 American Express Shoes. Crafted with passion for excellence.</p>
-          <p className="mt-3 text-xs sm:text-sm font-medium text-foreground">Payment Policy Statement</p>
-          <p className="mt-1 text-xs sm:text-sm max-w-3xl mx-auto">
-            AmericanShoes.com is a brand of Box Breaker Global. All online payments are securely processed through Box Breaker Global’s verified Paystack merchant account.
-          </p>
-          <p>American Shoe Express. Move Like You Mean It!</p>
-          <a 
-            href="https://american-shoe-express-admin.vercel.app/login" 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="text-primary hover:underline text-sm"
-          >
-            Admin
-          </a>
-          <Link to={"/disclaimer"}>Disclaimer</Link>
+      <footer className="bg-[#d9d4d4] rounded-lg mx-4 mb-4 mt-8">
+        <div className="container mx-auto px-6 py-8">
+          {/* Top Section */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 pb-6">
+            {/* Left Column: Logo and Mission */}
+            <div className="md:col-span-1 lg:col-span-2 pt-4">
+              {/* Logo */}
+              <img src={Logo} className='w-26 h-20 size-46'/>
+
+              
+              {/* Mission Statement */}
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                American Shoe Express is a
+              </p>
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                humanitarian project of 
+              </p>
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                BoxBreaker Global. Our mission
+              </p>
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                is to provide high quality
+              </p>
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                foot while supporting
+              </p>
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                charitable and development
+              </p>
+              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+                initiaives across Africa
+              </p>
+            </div>
+
+            {/* Center Columns: Navigation Links */}
+            <div className="md:col-span-1">
+              <ul className="space-y-2 pt-10">
+                <li>
+                  <a href="#men" className="text-black hover:text-gray-700 text-m">
+                    Men
+                  </a>
+                </li>
+                <li>
+                  <a href="#womens" className="text-black hover:text-gray-700 text-m">
+                    Women
+                  </a>
+                </li>
+                <li>
+                  <a href="#unisex" className="text-black hover:text-gray-700 text-m">
+                    Unisex
+                  </a>
+                </li>
+                <li>
+                  <a href="#children" className="text-black hover:text-gray-700 text-m">
+                    Children
+                  </a>
+                </li>
+                <li>
+                  <a href="#teen" className="text-black hover:text-gray-700 text-m">
+                    Teens
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            <div className="md:col-span-1">
+              <ul className="space-y-2 pt-10">
+                <li>
+                  <a href="#sneakers" className="text-black hover:text-gray-700 text-m">
+                    Sneakers
+                  </a>
+                </li>
+                <li>
+                  <a href="#dress" className="text-black hover:text-gray-700 text-m">
+                    Dress
+                  </a>
+                </li>
+                <li>
+                  <a href="#boots" className="text-black hover:text-gray-700 text-m">
+                    Boots
+                  </a>
+                </li>
+                <li>
+                  <a href="#sandals" className="text-black hover:text-gray-700 text-m">
+                    Sandals
+                  </a>
+                </li>
+                <li>
+                  <a href="#sliders" className="text-black hover:text-gray-700 text-m">
+                    Sliders
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+            {/* Right Column: Social & Contact */}
+            <div className="md:col-span-1">
+              <ul className="space-y-2 pt-10">
+                <li>
+                  <a href="#facebook" className="text-black hover:text-gray-700 text-m">
+                    Facebook
+                  </a>
+                </li>
+                <li>
+                  <a href="#instagram" className="text-black hover:text-gray-700 text-m">
+                    Instagram
+                  </a>
+                </li>
+                <li>
+                  <a href="#disclaimer" className="text-black hover:text-gray-700 text-m">
+                    Disclaimer
+                  </a>
+                </li>
+                <li>
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <button className="text-black hover:text-gray-700 text-m">
+                          Size Chart
+                        </button>
+                      </DialogTrigger>
+                      <DialogContent className="max-w-2xl">
+                        <DialogHeader>
+                          <DialogTitle>Size Chart</DialogTitle>
+                        </DialogHeader>
+                        <img
+                          src={shoeSize}
+                          alt="Shoe Size Chart"
+                          className="w-full h-auto rounded-lg"
+                        />
+                      </DialogContent>
+                    </Dialog>
+                  </li>
+
+                <li>
+                  <Dialog>
+                    <DialogTrigger asChild>
+                      <button className="text-black hover:text-gray-700 text-m">
+                        Contact Us
+                      </button>
+                    </DialogTrigger>
+
+                    <DialogContent className="sm:max-w-md">
+                      <DialogHeader>
+                        <DialogTitle>Contact Us</DialogTitle>
+                      </DialogHeader>
+
+                      <ContactForm />
+                    </DialogContent>
+                  </Dialog>
+                </li>
+
+              </ul>
+            </div>
+          </div>
+
+          {/* Separator Line */}
+          <div className="border-t border-black my-6"></div>
+
+          {/* Bottom Section */}
+          <div className="text-center space-y-2">
+            <p className="text-m text-gray-500">
+              © American Shoe Express. All Rights Reserved 2023
+            </p>
+            <p className="text-m text-gray-500">
+              All online payments are securely processed through Box Breaker Global's verified Paystack merchant account.
+            </p>
+          </div>
         </div>
       </footer>
+      
     </div>
   );
 };
 
 export default Index;
+
+
+const ContactForm = () => {
+  const [formData, setFormData] = useState({
+    name: "",
+    phoneNumber: "",
+    comment: "",
+  });
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      // Example: send to backend (adjust route as needed)
+      await axios.post("/contact", formData);
+      alert("Message sent successfully!");
+      setFormData({ name: "", phoneNumber: "", comment: "" });
+    } catch (error) {
+      console.error("Error sending message:", error);
+      alert("Failed to send message. Please try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+      <div className="space-y-1">
+        <Label htmlFor="name">Name</Label>
+        <Input
+          id="name"
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Enter your name"
+          required
+        />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="phoneNumber">Phone Number</Label>
+        <Input
+          id="phoneNumber"
+          name="phoneNumber"
+          value={formData.phoneNumber}
+          onChange={handleChange}
+          placeholder="e.g. +233 555 123 456"
+          required
+        />
+      </div>
+
+      <div className="space-y-1">
+        <Label htmlFor="comment">Comment</Label>
+        <Textarea
+          id="comment"
+          name="comment"
+          value={formData.comment}
+          onChange={handleChange}
+          placeholder="Type your message here..."
+          rows={4}
+          required
+        />
+      </div>
+
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Sending..." : "Send Message"}
+      </Button>
+    </form>
+  );
+};
