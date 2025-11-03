@@ -34,7 +34,6 @@ const Index = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [shoes, setShoes] = useState<any[]>([]);
-
   const [searchTerm, setSearchTerm] = useState("");
 
   const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
@@ -85,31 +84,28 @@ const Index = () => {
     itemNumber: item?.itemNumber,
   }));
 
-  // ✅ Apply filtering from localStorage selection
-  const localSelection = localStorage.getItem("selected")?.toLowerCase();
-
+  // ✅ Filter products by tab & search term
   const filteredProducts = apiProducts.filter((product: any) => {
-  const localSelection = localStorage.getItem("selected")?.toLowerCase();
+    const localSelection = localStorage.getItem("selected")?.toLowerCase();
 
-  // Filter by tab selection
-  const matchesTab =
-    localSelection
-      ? (Array.isArray(product.gender) &&
-          product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
-        (Array.isArray(product.shoeType) &&
-          product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
-        (Array.isArray(product.shoeStatus) &&
-          product.shoeStatus.some((s: string) => s.toLowerCase() === localSelection))
-      : true;
+    // Filter by tab selection
+    const matchesTab =
+      localSelection
+        ? (Array.isArray(product.gender) &&
+            product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
+          (Array.isArray(product.shoeType) &&
+            product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
+          (Array.isArray(product.shoeStatus) &&
+            product.shoeStatus.some((s: string) => s.toLowerCase() === localSelection))
+        : true;
 
-  // Filter by search term
-  const matchesSearch = product.name
-    .toLowerCase()
-    .includes(searchTerm.toLowerCase());
+    // Filter by search term
+    const matchesSearch = product.name
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
 
-  return matchesTab && matchesSearch;
-});
-
+    return matchesTab && matchesSearch;
+  });
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -158,15 +154,15 @@ const Index = () => {
               ))}
             </div>
 
-            {/* Right Side (Search + Cart) */}
+            {/* Right Side (Desktop Search + Cart) */}
             <div className="hidden md:flex items-center gap-4">
               <input
-                    type="search"
-                    placeholder="Search..."
-                    className="h-10 w-60 rounded-lg border border-black/10 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
+                type="search"
+                placeholder="Search..."
+                className="h-10 w-60 rounded-lg border border-black/10 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
 
               <div className="flex items-center gap-2">
                 <Button
@@ -194,8 +190,24 @@ const Index = () => {
               <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
             </div>
 
-            {/* Mobile Menu Button */}
-            <div className="md:hidden flex items-center">
+            {/* Mobile Header: Cart + Menu */}
+            <div className="md:hidden flex items-center gap-4 justify-end pr-4">
+              {/* Mobile Cart */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
+                onClick={() => setCartOpen(true)}
+              >
+                <ShoppingCart />
+                {cart.length > 0 && (
+                  <span className="absolute -top-1 -right-1 bg-[#b22234] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    {cart.reduce((total, item) => total + item.quantity, 0)}
+                  </span>
+                )}
+              </Button>
+
+              {/* Mobile Menu Button */}
               <button
                 onClick={toggleMenu}
                 className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-neutral-100 focus:outline-none"
@@ -305,7 +317,6 @@ const Index = () => {
               </p>
             )}
           </div>
-
         </div>
       </section>
 
@@ -319,6 +330,9 @@ const Index = () => {
 
       {/* ✅ Footer */}
       <Footer handleTabClick={handleTabClick} />
+
+      {/* ✅ Cart Drawer */}
+      <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
     </div>
   );
 };
@@ -339,10 +353,8 @@ const ContactForm = () => {
     try {
       const response = await axios.post("/add-message", formData);
       if(response.data.success){
-
         alert("Message sent successfully!");
         setFormData({ name: "", phoneNumber: "", comment: "" });
-
       }
     } catch {
       alert("Failed to send message. Try again later.");
@@ -410,44 +422,40 @@ const Footer = ({handleTabClick}) => (
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Facebook</a></li>
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Instagram</a></li>
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Disclaimer</a></li>
-             <li>
-                    <Dialog>
-                      <DialogTrigger asChild>
-                        <button className="text-black hover:text-gray-700 text-m">
-                          Size Chart
-                        </button>
-                      </DialogTrigger>
-                      <DialogContent className="max-w-2xl">
-                        <DialogHeader>
-                          <DialogTitle>Size Chart</DialogTitle>
-                        </DialogHeader>
-                        <img
-                          src={shoeSize}
-                          alt="Shoe Size Chart"
-                          className="w-full h-auto rounded-lg"
-                        />
-                      </DialogContent>
-                    </Dialog>
-                  </li>
-
-                <li>
-                  <Dialog>
-                    <DialogTrigger asChild>
-                      <button className="text-black hover:text-gray-700 text-m">
-                        Contact Us
-                      </button>
-                    </DialogTrigger>
-
-                    <DialogContent className="sm:max-w-md">
-                      <DialogHeader>
-                        <DialogTitle>Contact Us</DialogTitle>
-                      </DialogHeader>
-
-                      <ContactForm />
-                    </DialogContent>
-                  </Dialog>
-                </li>
-
+            <li>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-black hover:text-gray-700 text-m">
+                    Size Chart
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader>
+                    <DialogTitle>Size Chart</DialogTitle>
+                  </DialogHeader>
+                  <img
+                    src={shoeSize}
+                    alt="Shoe Size Chart"
+                    className="w-full h-auto rounded-lg"
+                  />
+                </DialogContent>
+              </Dialog>
+            </li>
+            <li>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-black hover:text-gray-700 text-m">
+                    Contact Us
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Contact Us</DialogTitle>
+                  </DialogHeader>
+                  <ContactForm />
+                </DialogContent>
+              </Dialog>
+            </li>
           </ul>
         </div>
       </div>
