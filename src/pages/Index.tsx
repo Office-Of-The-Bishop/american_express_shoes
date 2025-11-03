@@ -1,22 +1,17 @@
-import { useEffect, useState } from 'react';
-import { Navbar } from '@/components/Navbar';
-import { ProductCard } from '@/components/ProductCard';
-import { useCart } from '@/hooks/useCart';
-import { Button } from '@/components/ui/button';
-import { ArrowRight } from 'lucide-react';
-import { Product } from '@/types/product';
-import axios from 'axios';
-import { useToast } from '@/hooks/use-toast';
-import heroBanner from '@/assets/American Shoe Logo Hero.png';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { ProductDetailsModal } from '@/components/ProductDetailsModal';
-
+import React, { useEffect, useState } from "react";
+import logo from "../assets/American Shoe Logo - transparent.png";
+import ShoppingCart from "@/components/ShoppingCart";
+import { useCart } from "@/hooks/useCart";
+import { CartDrawer } from "@/components/CartDrawer";
+import { Button } from "@/components/ui/button";
+import { ProductCard } from "@/components/ProductCard";
+import { ProductDetailsModal } from "@/components/ProductDetailsModal";
+import { useToast } from "@/hooks/use-toast";
+import { Product } from "@/types/product";
+import axios from "axios";
+import heroBanner from "@/assets/American Shoe Logo Hero.png";
+import mobileHero from "../assets/mobile hero (1).png";
+import shoeSize from "../assets/Shoe Size.png";
 import Logo from "../assets/American Shoe Logo - transparent.png";
 import {
   Dialog,
@@ -25,44 +20,96 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import shoeSize from "../assets/Shoe Size.png"
-
-
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-// import { Button } from "@/components/ui/button";
 
-
-
-// import logo "../assets/American Shoe Logo - transparent.png";
-import { Link } from 'react-router-dom';
+// ✅ Main Page
 const Index = () => {
-  const { addToCart } = useCart();
+  const { addToCart, cart } = useCart();
   const { toast } = useToast();
-  const [selectedGender, setSelectedGender] = useState<string>('all');
-  const [selectedShoeType, setSelectedShoeType] = useState<string>('all');
+  const [cartOpen, setCartOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<string | null>(null);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [shoes, setShoes] = useState<any[]>([]);
 
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
+  const redTabs = ["Sneakers", "Dress", "Sandals", "Boots"];
+
+  // ✅ Fetch products
   useEffect(() => {
     const fetchShoes = async () => {
       try {
-        const response = await axios.get('/all-shoes');
+        const response = await axios.get("/all-shoes");
         const items = response?.data?.allItems ?? [];
         setShoes(items);
       } catch (error) {
-        console.error('Failed to fetch shoes', error);
+        console.error("Failed to fetch shoes", error);
         setShoes([]);
       }
     };
     fetchShoes();
   }, []);
 
-  const scrollToProducts = () => {
-    document.getElementById('products')?.scrollIntoView({ behavior: 'smooth' });
+  // ✅ Load active tab from localStorage
+  useEffect(() => {
+    const stored = localStorage.getItem("selected");
+    if (stored) setActiveTab(stored);
+  }, []);
+
+  // ✅ Handle tab click
+  const handleTabClick = (tabValue: string): void => {
+    localStorage.setItem("selected", tabValue);
+    setActiveTab(tabValue);
   };
+
+  const toggleMenu = () => setMenuOpen(!menuOpen);
+
+  const apiProducts = shoes.map((item: any, index: number) => ({
+    id: `${item?.name ?? "item"}-${index}`,
+    name: item?.name,
+    description: item?.description,
+    images: item?.images,
+    price: item?.cost,
+    gender: item?.Gender ?? ["Unisex"],
+    shoeType: item?.type ?? ["Card"],
+    quantity: item?.quantity ?? 0,
+    shoeStatus: item?.shoeStatus ?? ["Brand New"],
+    AmericanSize: item?.size,
+    GhanaianSize: item?.GhanaianSize,
+    retailCost: item?.retailCost,
+    itemNumber: item?.itemNumber,
+  }));
+
+  // ✅ Apply filtering from localStorage selection
+  const localSelection = localStorage.getItem("selected")?.toLowerCase();
+
+  const filteredProducts = apiProducts.filter((product: any) => {
+  const localSelection = localStorage.getItem("selected")?.toLowerCase();
+
+  // Filter by tab selection
+  const matchesTab =
+    localSelection
+      ? (Array.isArray(product.gender) &&
+          product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
+        (Array.isArray(product.shoeType) &&
+          product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
+        (Array.isArray(product.shoeStatus) &&
+          product.shoeStatus.some((s: string) => s.toLowerCase() === localSelection))
+      : true;
+
+  // Filter by search term
+  const matchesSearch = product.name
+    .toLowerCase()
+    .includes(searchTerm.toLowerCase());
+
+  return matchesTab && matchesSearch;
+});
+
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -77,65 +124,192 @@ const Index = () => {
     });
   };
 
-  const apiProducts = shoes.map((item: any, index: number) => ({
-    id: `${item?.name ?? 'item'}-${index}`,
-    name: item?.name,
-    description: item?.description,
-    images: item?.images,
-    price: item?.cost,
-    gender: item?.Gender ?? 'Unisex',
-    shoeType: item?.type ?? ['Card'],
-    quantity: item?.quantity ?? 0,
-    shoeStatus:item?.shoeStatus,
-    AmericanSize:item?.size,
-    GhanaianSize:item?.GhanaianSize,
-    retailCost:item?.retailCost,
-    itemNumber:item?.itemNumber
-
-  }));
-
-  const filteredProducts = apiProducts.filter((product: any) => {
-    const genderMatch = selectedGender === 'all' || product?.gender === selectedGender;
-    const shoeTypeMatch = selectedShoeType === 'all' || product?.shoeType === selectedShoeType;
-    return genderMatch && shoeTypeMatch;
-  });
-
   return (
     <div className="min-h-screen bg-background">
-      <Navbar  />
-      
-     {/* Hero Section */}
-    <section className="relative overflow-hidden">
-        <img
-          src={heroBanner}
-          alt="Hero"
-          className="w-full h-auto block"
-        />
+
+      {/* ✅ Inline Navbar */}
+      <nav className="sticky top-0 z-50 border-b border-black/10 bg-white backdrop-blur">
+        <div className="mx-auto max-w-7xl px-3 sm:px-6">
+          <div className="flex h-16 items-center justify-between">
+            {/* Logo */}
+            <a href="#" className="flex items-center gap-2 shrink-0" aria-label="Home">
+              <img src={logo} alt="American Shoe Express" className="w-24 h-16 absolute left-[7%]" />
+            </a>
+
+            {/* Center Tabs (Desktop) */}
+            <div className="hidden md:flex items-center gap-6 flex-1 justify-center text-sm font-medium">
+              {[...blackTabs, ...redTabs].map((tab) => (
+                <a
+                  key={tab}
+                  href="#products"
+                  onClick={() => handleTabClick(tab)}
+                  className={`px-2 py-1 rounded transition-all duration-150 ${
+                    activeTab === tab
+                      ? "underline underline-offset-4 font-semibold"
+                      : ""
+                  } ${
+                    blackTabs.includes(tab)
+                      ? "text-black hover:text-gray-700"
+                      : "text-red-700 hover:text-red-500"
+                  }`}
+                >
+                  {tab}
+                </a>
+              ))}
+            </div>
+
+            {/* Right Side (Search + Cart) */}
+            <div className="hidden md:flex items-center gap-4">
+              <input
+                    type="search"
+                    placeholder="Search..."
+                    className="h-10 w-60 rounded-lg border border-black/10 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
+                  onClick={() => setCartOpen(true)}
+                >
+                  <span className="text-sm font-medium">CART</span>
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
+                  onClick={() => setCartOpen(true)}
+                >
+                  <ShoppingCart />
+                  {cart.length > 0 && (
+                    <span className="absolute -top-1 -right-1 bg-[#b22234] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cart.reduce((total, item) => total + item.quantity, 0)}
+                    </span>
+                  )}
+                </Button>
+              </div>
+              <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
+            </div>
+
+            {/* Mobile Menu Button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={toggleMenu}
+                className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-neutral-100 focus:outline-none"
+                aria-label="Toggle menu"
+              >
+                {menuOpen ? (
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg
+                    className="h-5 w-5"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth={2}
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M3 6h18M3 12h18M3 18h18" />
+                  </svg>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Dropdown Menu */}
+        {menuOpen && (
+          <div className="md:hidden border-t border-black/10 bg-white">
+            <div className="px-4 py-4 space-y-4">
+              <input
+                type="search"
+                placeholder="Search..."
+                className="w-full h-10 rounded-lg border border-black/10 bg-white px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+
+              <ul className="grid grid-cols-2 gap-3">
+                {[...blackTabs, ...redTabs].map((tab) => (
+                  <li key={tab}>
+                    <a
+                      href="#products"
+                      onClick={() => {
+                        handleTabClick(tab);
+                        setMenuOpen(false);
+                      }}
+                      className={`block px-3 py-2 rounded text-sm font-medium text-center ${
+                        activeTab === tab
+                          ? "underline underline-offset-4 font-semibold"
+                          : ""
+                      } ${
+                        blackTabs.includes(tab)
+                          ? "text-black hover:text-gray-700"
+                          : "text-red-700 hover:text-red-500"
+                      }`}
+                    >
+                      {tab}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* ✅ Hero Section */}
+      <section className="relative overflow-hidden">
+        <img src={heroBanner} alt="Hero" className="hidden sm:block w-full h-auto" />
+        <img src={mobileHero} alt="Mobile Hero" className="block sm:hidden w-full h-auto" />
       </section>
 
-      {/* Products Section */}
-      <section id="products" className=" relative mt-[40px] sm:pb-20 bg-muted/30">
+      {/* ✅ Product Section */}
+      <section id="products" className="relative mt-[40px] sm:pb-20 bg-muted/30">
         <div className="container mx-auto">
           <div className="text-center mb-8 sm:mb-12">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4">Browse our Collection and Walk Good</h2>
             <p className="text-muted-foreground text-base sm:text-lg max-w-2xl mx-auto px-4">
-              Shoes that feel good, look good, and do good!
+              Premium style, comfort, and durability without the sky-high price tag.
             </p>
           </div>
-          
-           <div className="flex gap-5">
-            {filteredProducts.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
-                onProductClick={handleProductClick}
-              />
-            ))}
+
+          <div
+            className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center px-4"
+          >
+            {filteredProducts.length > 0 ? (
+              filteredProducts.map((product) => (
+                <ProductCard
+                  key={product.id}
+                  product={product}
+                  onProductClick={handleProductClick}
+                />
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-500">
+                No products found for this selection.
+              </p>
+            )}
           </div>
+
         </div>
       </section>
 
-        {/* Product Details Modal */}
+      {/* ✅ Product Modal */}
       <ProductDetailsModal
         product={selectedProduct}
         open={modalOpen}
@@ -143,121 +317,100 @@ const Index = () => {
         onAddToCart={handleAddToCart}
       />
 
-      {/* Footer */}
-      <footer className="bg-[#d9d4d4] rounded-lg mx-4 mb-4 mt-8">
-        <div className="container mx-auto px-6 py-8">
-          {/* Top Section */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 pb-6">
-            {/* Left Column: Logo and Mission */}
-            <div className="md:col-span-1 lg:col-span-2 pt-4">
-              {/* Logo */}
-              <img src={Logo} className='w-26 h-20 size-46'/>
+      {/* ✅ Footer */}
+      <Footer handleTabClick={handleTabClick} />
+    </div>
+  );
+};
 
-              
-              {/* Mission Statement */}
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                American Shoe Express is a
-              </p>
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                humanitarian project of 
-              </p>
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                BoxBreaker Global. Our mission
-              </p>
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                is to provide high quality
-              </p>
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                foot while supporting
-              </p>
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                charitable and development
-              </p>
-              <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
-                initiaives across Africa
-              </p>
-            </div>
+export default Index;
 
-            {/* Center Columns: Navigation Links */}
-            <div className="md:col-span-1">
-              <ul className="space-y-2 pt-10">
-                <li>
-                  <a href="#men" className="text-black hover:text-gray-700 text-m">
-                    Men
-                  </a>
-                </li>
-                <li>
-                  <a href="#womens" className="text-black hover:text-gray-700 text-m">
-                    Women
-                  </a>
-                </li>
-                <li>
-                  <a href="#unisex" className="text-black hover:text-gray-700 text-m">
-                    Unisex
-                  </a>
-                </li>
-                <li>
-                  <a href="#children" className="text-black hover:text-gray-700 text-m">
-                    Children
-                  </a>
-                </li>
-                <li>
-                  <a href="#teen" className="text-black hover:text-gray-700 text-m">
-                    Teens
-                  </a>
-                </li>
-              </ul>
-            </div>
+// ✅ Contact Form
+const ContactForm = () => {
+  const [formData, setFormData] = useState({ name: "", phoneNumber: "", comment: "" });
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-            <div className="md:col-span-1">
-              <ul className="space-y-2 pt-10">
-                <li>
-                  <a href="#sneakers" className="text-black hover:text-gray-700 text-m">
-                    Sneakers
-                  </a>
-                </li>
-                <li>
-                  <a href="#dress" className="text-black hover:text-gray-700 text-m">
-                    Dress
-                  </a>
-                </li>
-                <li>
-                  <a href="#boots" className="text-black hover:text-gray-700 text-m">
-                    Boots
-                  </a>
-                </li>
-                <li>
-                  <a href="#sandals" className="text-black hover:text-gray-700 text-m">
-                    Sandals
-                  </a>
-                </li>
-                <li>
-                  <a href="#sliders" className="text-black hover:text-gray-700 text-m">
-                    Sliders
-                  </a>
-                </li>
-              </ul>
-            </div>
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
 
-            {/* Right Column: Social & Contact */}
-            <div className="md:col-span-1">
-              <ul className="space-y-2 pt-10">
-                <li>
-                  <a href="#facebook" className="text-black hover:text-gray-700 text-m">
-                    Facebook
-                  </a>
-                </li>
-                <li>
-                  <a href="#instagram" className="text-black hover:text-gray-700 text-m">
-                    Instagram
-                  </a>
-                </li>
-                <li>
-                  <a href="#disclaimer" className="text-black hover:text-gray-700 text-m">
-                    Disclaimer
-                  </a>
-                </li>
-                <li>
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+    try {
+      const response = await axios.post("/add-message", formData);
+      if(response.data.success){
+
+        alert("Message sent successfully!");
+        setFormData({ name: "", phoneNumber: "", comment: "" });
+
+      }
+    } catch {
+      alert("Failed to send message. Try again later.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
+      <div>
+        <Label>Name</Label>
+        <Input name="name" value={formData.name} onChange={handleChange} required />
+      </div>
+      <div>
+        <Label>Phone Number</Label>
+        <Input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
+      </div>
+      <div>
+        <Label>Comment</Label>
+        <Textarea name="comment" value={formData.comment} onChange={handleChange} rows={4} required />
+      </div>
+      <Button type="submit" className="w-full" disabled={isSubmitting}>
+        {isSubmitting ? "Sending..." : "Send Message"}
+      </Button>
+    </form>
+  );
+};
+
+// ✅ Footer Component
+const Footer = ({handleTabClick}) => (
+  <footer className="bg-[#d9d4d4] w-full mx-4 mb-4 mt-8">
+    <div className="container mx-auto px-6 py-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 pb-6">
+        <div className="md:col-span-1 lg:col-span-2 pt-4">
+          <img src={Logo} className="w-26 h-20" />
+          <p className="text-sm text-gray-500 italic leading-relaxed max-w-md">
+            American Shoe Express is a humanitarian project of BoxBreaker Global, providing
+            high-quality footwear while supporting charitable initiatives across Africa.
+          </p>
+        </div>
+
+        <div className="md:col-span-1">
+          <ul className="space-y-2 pt-10">
+            {["Men", "Womens", "Unisex", "Children", "Teen"].map((link) => (
+              <li key={link}>
+                <a href="#products" onClick={()=>{handleTabClick(link)}} className="text-black hover:text-gray-700 text-m">{link}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="md:col-span-1">
+          <ul className="space-y-2 pt-10">
+            {["Sneakers", "Dress", "Boots", "Sandals", "Sliders"].map((link) => (
+              <li key={link}>
+                <a href="#products" onClick={()=>{handleTabClick(link)}} className="text-black hover:text-gray-700 text-m">{link}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="md:col-span-1">
+          <ul className="space-y-2 pt-10">
+            <li><a href="#" className="text-black hover:text-gray-700 text-m">Facebook</a></li>
+            <li><a href="#" className="text-black hover:text-gray-700 text-m">Instagram</a></li>
+            <li><a href="#" className="text-black hover:text-gray-700 text-m">Disclaimer</a></li>
+             <li>
                     <Dialog>
                       <DialogTrigger asChild>
                         <button className="text-black hover:text-gray-700 text-m">
@@ -295,104 +448,21 @@ const Index = () => {
                   </Dialog>
                 </li>
 
-              </ul>
-            </div>
-          </div>
-
-          {/* Separator Line */}
-          <div className="border-t border-black my-6"></div>
-
-          {/* Bottom Section */}
-          <div className="text-center space-y-2">
-            <p className="text-m text-gray-500">
-              © American Shoe Express. All Rights Reserved 2023
-            </p>
-            <p className="text-m text-gray-500">
-              All online payments are securely processed through Box Breaker Global's verified Paystack merchant account.
-            </p>
-          </div>
+          </ul>
         </div>
-      </footer>
-      
+      </div>
+
+      <div className="border-t border-black my-6"></div>
+
+      <div className="text-center space-y-2">
+        <div className="flex flex-col sm:flex-row justify-center items-center gap-2 text-gray-500 text-sm">
+          <p>© American Shoe Express. All Rights Reserved 2023.</p>
+          <p>Telephone: +233 53 884 7703</p>
+        </div>
+        <p className="text-m text-gray-500">
+          All online payments are securely processed through Box Breaker Global's verified Paystack merchant account.
+        </p>
+      </div>
     </div>
-  );
-};
-
-export default Index;
-
-
-const ContactForm = () => {
-  const [formData, setFormData] = useState({
-    name: "",
-    phoneNumber: "",
-    comment: "",
-  });
-
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      // Example: send to backend (adjust route as needed)
-      await axios.post("/contact", formData);
-      alert("Message sent successfully!");
-      setFormData({ name: "", phoneNumber: "", comment: "" });
-    } catch (error) {
-      console.error("Error sending message:", error);
-      alert("Failed to send message. Please try again later.");
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-4 mt-4">
-      <div className="space-y-1">
-        <Label htmlFor="name">Name</Label>
-        <Input
-          id="name"
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Enter your name"
-          required
-        />
-      </div>
-
-      <div className="space-y-1">
-        <Label htmlFor="phoneNumber">Phone Number</Label>
-        <Input
-          id="phoneNumber"
-          name="phoneNumber"
-          value={formData.phoneNumber}
-          onChange={handleChange}
-          placeholder="e.g. +233 555 123 456"
-          required
-        />
-      </div>
-
-      <div className="space-y-1">
-        <Label htmlFor="comment">Comment</Label>
-        <Textarea
-          id="comment"
-          name="comment"
-          value={formData.comment}
-          onChange={handleChange}
-          placeholder="Type your message here..."
-          rows={4}
-          required
-        />
-      </div>
-
-      <Button type="submit" className="w-full" disabled={isSubmitting}>
-        {isSubmitting ? "Sending..." : "Send Message"}
-      </Button>
-    </form>
-  );
-};
+  </footer>
+);

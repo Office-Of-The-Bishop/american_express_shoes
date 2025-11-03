@@ -14,11 +14,11 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
   const images = product.images || [];
   const hasMultipleImages = images.length > 1;
 
-  // Calculate retail price (assuming 30% markup for discount calculation)
   const retailPrice = product.price ? Math.round(product.price / 0.77) : 0;
-  const discountPercentage = product.price && product.retailCost 
-    ? Math.round(((Number(product.retailCost) - product.price) / retailPrice) * 100) 
-    : 0;
+  const discountPercentage =
+    product.price && product.retailCost
+      ? Math.round(((Number(product.retailCost) - product.price) / Number(product.retailCost)) * 100)
+      : 0;
 
   const nextImage = () => {
     if (hasMultipleImages) {
@@ -36,23 +36,17 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
     setCurrentImageIndex(index);
   };
 
-  // Format gender display
-  
-
-  const isNew = true; // You can add a property to Product type for this
-  // const isSneakers = product.shoeType?.toLowerCase().includes('sneaker') || product.shoeType?.toLowerCase() === 'sneakers';
-
   return (
-<Card className="hover:shadow-lg transition-shadow bg-[#F5F5DC] border-solid border-color-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
+    <Card className="hover:shadow-lg transition-shadow bg-white border-solid border-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
       {/* Image Carousel Section */}
       {images.length > 0 && (
         <div className="relative aspect-square overflow-hidden bg-white">
-          <img 
-            src={images[currentImageIndex]} 
+          <img
+            src={images[currentImageIndex]}
             alt={product.name}
             className="w-full h-full object-cover"
           />
-          
+
           {/* Navigation Arrows */}
           {hasMultipleImages && (
             <>
@@ -102,62 +96,52 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
         </div>
       )}
 
-      <CardContent className="p-4 bg-[#F5F5DC]">
+      <CardContent className="p-4 bg-white">
         {/* Category */}
+       
         <p className="text-xs text-red-700 uppercase tracking-wider mb-2 font-medium flex gap-2 flex-wrap">
-            {
-            product.gender.map((item)=>{
-              return(
-                <p>{item}</p>
-              )
-            })
-          }
-        
+         {product.gender.join(" / ")}
         </p>
 
         {/* Product Name */}
         <h3 className="font-bold text-2xl text-black">{product.name}</h3>
 
-        <h3 className="text-[10px] text-black mb-2">{product.itemNumber}</h3>
-
-        {/* <h2>{product.itemNumber}</h2> */}
+        {/* Item Number (slightly larger & bold) */}
+        <h3 className="text-sm text-gray-700 font-semibold mb-2 tracking-wide">
+          {product.itemNumber}
+        </h3>
 
         {/* Labels */}
-        <div className='flex gap-2'>
-            
-          <div className="flex gap-2 mb-3 flex-wrap">
-            {
-              product.shoeStatus.map((item)=>{
-                return(
-                  <p className='bg-gray-400 p-2 font-semibold'>{item}</p>
-                )
-              })
-            }
-          
-            
-          </div>
-          <div className="flex gap-2 mb-3 flex-wrap">
-            {
-              product.shoeType.map((item)=>{
-                return(
-                  <p className='bg-yellow-300 p-2 font-semibold'>{item}</p>
-                )
-              })
-            }
-          
-            
-          </div>
-          <div className='bg-yellow-300 p-2 mb-3 font-semibold'><p>Size:<span className='ml-1'>{product.GhanaianSize}</span></p></div>
+        <div className="flex gap-2 flex-wrap mb-3">
+          {product.shoeStatus.map((item, i) => (
+            <p
+              key={i}
+              className="bg-gray-200 px-1.5 py-0.5 text-xs font-semibold rounded"
+            >
+              {item}
+            </p>
+          ))}
+          {product.shoeType.map((item, i) => (
+            <p
+              key={i}
+              className="bg-yellow-200 px-1.5 py-0.5 text-xs font-semibold rounded"
+            >
+              {item}
+            </p>
+          ))}
+          <p className="bg-yellow-200 px-1.5 py-0.5 text-xs font-semibold rounded">
+            Size: <span className="ml-1">{product.GhanaianSize}</span>
+          </p>
         </div>
 
         {/* Pricing Information */}
         <div className="mb-3 space-y-1">
           {Number(product.retailCost) > product.price && (
-            <div className='flex gap-1'>
-            <p className='text-sm text-gray-500'>Retail Price: </p>  
-            <p className="text-sm text-gray-500 line-through">
-              GHS {product.retailCost}
-            </p>
+            <div className="flex gap-1">
+              <p className="text-sm text-gray-500">Retail Price:</p>
+              <p className="text-sm text-gray-500 line-through">
+                GHS {product.retailCost}
+              </p>
             </div>
           )}
           <p className="text-xl font-bold text-green-600">
@@ -173,12 +157,12 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
             </span>
           )}
           <span className="px-2 py-1 text-xs font-medium bg-gray-200 text-black rounded">
-            Only {product.quantity || 0} Available.
+            Only {product.quantity || 0} Available
           </span>
         </div>
 
         {/* View Details Button */}
-        <Button 
+        <Button
           onClick={() => onProductClick(product)}
           variant="outline"
           className="w-full border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white uppercase font-medium"

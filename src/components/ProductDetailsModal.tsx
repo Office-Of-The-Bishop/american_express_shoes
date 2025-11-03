@@ -41,7 +41,7 @@ export const ProductDetailsModal = ({
         <DialogHeader>
           <DialogTitle className="text-2xl">{product.name}</DialogTitle>
         </DialogHeader>
-        
+
         <div className="grid md:grid-cols-2 gap-6 mt-4">
           {/* Product Images Carousel */}
           <div className="w-full">
@@ -72,26 +72,63 @@ export const ProductDetailsModal = ({
           <div className="flex flex-col gap-4">
             <div>
               <p className="text-sm text-muted-foreground uppercase tracking-wider mb-2">
-                {product.gender} • {product.shoeType}
+                {product.gender.join(" / ")} • {product.shoeType}
               </p>
               <p className="text-3xl font-bold text-accent mb-4">
-                ${product.price}
+                ₵{product.price}
               </p>
               <p className="text-base text-muted-foreground mb-4">
                 {product.description}
               </p>
             </div>
 
-            <div className="space-y-2">
-              <div className="flex items-center justify-between py-2 border-t">
-                <span className="text-sm font-medium">Gender:</span>
-                <span className="text-sm text-muted-foreground">{product.gender}</span>
+            {/* Extra Details */}
+            <div className="space-y-2 border-t pt-2">
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">Item Number:</span>
+                <span className="text-sm text-muted-foreground">{product.itemNumber}</span>
               </div>
-              <div className="flex items-center justify-between py-2 border-t">
+
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">Gender:</span>
+                <span className="text-sm text-muted-foreground">{product.gender.join(" / ")}</span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Type:</span>
                 <span className="text-sm text-muted-foreground">{product.shoeType}</span>
               </div>
-              <div className="flex items-center justify-between py-2 border-t">
+
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">American Size:</span>
+                <span className="text-sm text-muted-foreground">{product.AmericanSize}</span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">Ghanaian Size:</span>
+                <span className="text-sm text-muted-foreground">{product.GhanaianSize}</span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">Retail Cost:</span>
+                <span className="text-sm text-muted-foreground">₵{product.retailCost}</span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">Cost Price:</span>
+                <span className="text-sm text-muted-foreground">₵{product.price}</span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 border-b">
+                <span className="text-sm font-medium">Shoe Status:</span>
+                <span className="text-sm text-muted-foreground">
+                  {Array.isArray(product.shoeStatus)
+                    ? product.shoeStatus.join(", ")
+                    : product.shoeStatus}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Stock Available:</span>
                 <span className="text-sm text-muted-foreground">{product.quantity} units</span>
               </div>
