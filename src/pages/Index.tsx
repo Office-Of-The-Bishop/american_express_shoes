@@ -37,7 +37,7 @@ const Index = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
-  const redTabs = ["Sneakers", "Dress", "Sandals", "Boots"];
+  const redTabs = ["Sneakers", "Dress", "Sandals", "Boots","Sliders"];
 
   // ✅ Fetch products
   useEffect(() => {
@@ -53,6 +53,7 @@ const Index = () => {
     };
     fetchShoes();
   }, []);
+  
 
   // ✅ Load active tab from localStorage
   useEffect(() => {
@@ -65,6 +66,8 @@ const Index = () => {
     localStorage.setItem("selected", tabValue);
     setActiveTab(tabValue);
   };
+
+
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -84,28 +87,52 @@ const Index = () => {
     itemNumber: item?.itemNumber,
   }));
 
+  useEffect(() => {
+    const sectionId = localStorage.getItem("scrollTo");
+    if (sectionId) {
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: "smooth" });
+      }
+      localStorage.removeItem("scrollTo"); // cleanup
+    }
+  }, []);
+
   // ✅ Filter products by tab & search term
-  const filteredProducts = apiProducts.filter((product: any) => {
-    const localSelection = localStorage.getItem("selected")?.toLowerCase();
+ // ✅ Filter products by tab & search term (matches all fields)
+const filteredProducts = apiProducts.filter((product: any) => {
+  const localSelection = localStorage.getItem("selected")?.toLowerCase();
+  const search = searchTerm.toLowerCase().trim();
 
-    // Filter by tab selection
-    const matchesTab =
-      localSelection
-        ? (Array.isArray(product.gender) &&
-            product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
-          (Array.isArray(product.shoeType) &&
-            product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
-          (Array.isArray(product.shoeStatus) &&
-            product.shoeStatus.some((s: string) => s.toLowerCase() === localSelection))
-        : true;
+  // ✅ Filter by selected tab
+  const matchesTab =
+    localSelection
+      ? (Array.isArray(product.gender) &&
+          product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
+        (Array.isArray(product.shoeType) &&
+          product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
+        (Array.isArray(product.shoeStatus) &&
+          product.shoeStatus.some((s: string) => s.toLowerCase() === localSelection))
+      : true;
 
-    // Filter by search term
-    const matchesSearch = product.name
-      .toLowerCase()
-      .includes(searchTerm.toLowerCase());
+  // ✅ If no search term, just apply tab filter
+  if (!search) return matchesTab;
 
-    return matchesTab && matchesSearch;
-  });
+  // ✅ Flatten all product values (arrays → joined text)
+  const allValues = Object.values(product)
+    .map((val) => {
+      if (Array.isArray(val)) return val.join(" ").toLowerCase();
+      if (typeof val === "object" && val !== null) return JSON.stringify(val).toLowerCase();
+      return String(val).toLowerCase();
+    })
+    .join(" ");
+
+  // ✅ Check if search term exists anywhere in the product
+  const matchesSearch = allValues.includes(search);
+
+  return matchesTab && matchesSearch;
+});
+
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -128,9 +155,23 @@ const Index = () => {
         <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
-            <a href="#" className="flex items-center gap-2 shrink-0" aria-label="Home">
-              <img src={logo} alt="American Shoe Express" className="w-24 h-16 absolute left-[7%]" />
+            <a
+              href="#product"
+              onClick={() => {
+                localStorage.removeItem("selected");        // clear item
+                localStorage.setItem("scrollTo", "#products"); // remember section to scroll
+                window.location.reload();                    // refresh the page
+              }}
+              className="flex items-center gap-2 shrink-0"
+              aria-label="Home"
+            >
+              <img
+                src={logo}
+                alt="American Shoe Express"
+                className="w-24 h-16 absolute left-[7%]"
+              />
             </a>
+
 
             {/* Center Tabs (Desktop) */}
             <div className="hidden md:flex items-center gap-6 flex-1 justify-center text-sm font-medium">
