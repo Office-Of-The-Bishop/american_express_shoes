@@ -36,7 +36,7 @@ const Index = () => {
   const [shoes, setShoes] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
+  const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen","Size"];
   const redTabs = ["Sneakers", "Dress", "Sandals", "Boots","Sliders"];
 
   // ✅ Fetch products
@@ -379,7 +379,96 @@ const filteredProducts = apiProducts.filter((product: any) => {
 };
 
 export default Index;
+const DisclaimerDialog = () => {
+  return (
 
+        <div className="space-y-4 text-sm text-gray-700 leading-relaxed">
+          <section>
+            <h3 className="font-semibold text-base mb-1">Product Condition</h3>
+            <p>American Shoe Express offers two categories of footwear:</p>
+            <ol className="list-decimal list-inside ml-4">
+              <li>Brand-new shoes that have never been worn.</li>
+              <li>
+                Slightly used shoes originally purchased in the United States and
+                returned within a 14-day period by the first owner. These shoes may
+                show minimal signs of use and have been carefully inspected before
+                resale.
+              </li>
+            </ol>
+            <p className="mt-2">
+              All items are sold in as-is condition. Condition levels may vary, and
+              customers acknowledge this when purchasing.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base mb-1">No Returns or Exchanges</h3>
+            <p>
+              All sales made through American Shoe Express are final. Due to the nature of our humanitarian model:
+            </p>
+            <ul className="list-disc list-inside ml-4">
+              <li>No returns</li>
+              <li>No refunds</li>
+              <li>No exchanges</li>
+              <li>No store credit</li>
+            </ul>
+            <p className="mt-2">
+              By completing a purchase, buyers agree to these terms and accept the
+              product condition as described at checkout.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base mb-1">Payment Processing</h3>
+            <p>
+              All payments are securely processed by BoxBreaker Global through Paystack.
+              By using our website and completing a purchase, you authorize BoxBreaker
+              Global to process your payment.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base mb-1">No Guarantee of Availability</h3>
+            <p>
+              Inventory is limited and may change without notice. American Shoe Express
+              cannot guarantee that specific styles, sizes, or brands will remain
+              available.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base mb-1">Legal Notice</h3>
+            <p>American Shoe Express and BoxBreaker Global are not responsible for:</p>
+            <ul className="list-disc list-inside ml-4">
+              <li>Buyer’s misunderstanding of product condition</li>
+              <li>Wear and tear after purchase</li>
+              <li>Sizing issues or comfort preferences</li>
+              <li>Shipping delays caused by carriers or customs</li>
+            </ul>
+            <p className="mt-2">
+              American Shoe Express is a humanitarian project of BoxBreaker Global.
+              Our mission is to provide high-quality footwear while supporting
+              charitable and development initiatives across Africa. 100% of proceeds
+              from every purchase directly fund humanitarian programs run by
+              BoxBreaker Global.
+            </p>
+            <p>
+              Purchases support philanthropic efforts and are not tax-deductible
+              donations unless otherwise stated and supported with proper documentation.
+            </p>
+          </section>
+
+          <section>
+            <h3 className="font-semibold text-base mb-1">Thank You</h3>
+            <p>
+              By shopping with us, you are putting hope on someone’s feet and strength
+              in someone’s journey. Every step you take helps someone walk forward.
+            </p>
+          </section>
+        </div>
+    
+  );
+};
 // ✅ Contact Form
 const ContactForm = () => {
   const [formData, setFormData] = useState({ name: "", phoneNumber: "", comment: "" });
@@ -462,7 +551,27 @@ const Footer = ({handleTabClick}) => (
           <ul className="space-y-2 pt-10">
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Facebook</a></li>
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Instagram</a></li>
-            <li><a href="#" className="text-black hover:text-gray-700 text-m">Disclaimer</a></li>
+            {/* <li><a href="#" className="text-black hover:text-gray-700 text-m">Disclaimer</a></li> */}
+            <li>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-black hover:text-gray-700 text-m">
+                    Disclaimer
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto p-6">
+                  <DialogHeader>
+                    <DialogTitle className="text-xl font-bold mb-4">
+                      American Shoe Express Disclaimer
+                    </DialogTitle>
+                  </DialogHeader>
+
+                  <DisclaimerDialog />
+                </DialogContent>
+              </Dialog>
+            </li>
+
+
             <li>
               <Dialog>
                 <DialogTrigger asChild>
@@ -508,7 +617,7 @@ const Footer = ({handleTabClick}) => (
           <p>© American Shoe Express. All Rights Reserved 2023.</p>
           <p>Telephone: +233 53 884 7703</p>
         </div>
-        <p className="text-m text-gray-500">
+        <p className="text-sm text-gray-500">
           All online payments are securely processed through Box Breaker Global's verified Paystack merchant account.
         </p>
       </div>
