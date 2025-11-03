@@ -157,7 +157,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
             </span>
           )}
           <span className="px-2 py-1 text-xs font-medium bg-gray-200 text-black rounded">
-            Only {product.quantity || 0} Available
+            Only {Number(product.quantity) || 0} Available
           </span>
         </div>
 
