@@ -214,9 +214,10 @@ const filteredProducts = apiProducts.filter((product: any) => {
             name="size"
             className="border rounded px-3 py-2 w-32"
             value={selectedSize}
+            
             onChange={(e) => setSelectedSize(e.target.value)}
           >
-            <option value="">Size</option>
+            <option  value="">Size</option>
             {ghanaSizes.map((item) => (
               <option key={item} value={item}>{item}</option>
             ))}
@@ -254,18 +255,7 @@ const filteredProducts = apiProducts.filter((product: any) => {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         
-            <select
-            id="size-select"
-            name="size"
-            className="border rounded px-3 py-2 w-32"
-            value={selectedSize}
-            onChange={(e) => setSelectedSize(e.target.value)}
-          >
-            <option value="">Size</option>
-            {ghanaSizes.map((item) => (
-              <option key={item} value={item}>{item}</option>
-            ))}
-          </select>
+        
           
 
         {/* Cart Icon */}
@@ -347,6 +337,19 @@ const filteredProducts = apiProducts.filter((product: any) => {
                 </a>
               </li>
             ))}
+             <select
+            id="size-select"
+            name="size"
+            className="border rounded px-3 py-2 w-32 ml-1"
+            value={selectedSize}
+            
+            onChange={(e) => setSelectedSize(e.target.value)}
+          >
+            <option  value="">Size</option>
+            {ghanaSizes.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
             
             {[...redTabs].map((tab) => (
               <li key={tab}>
