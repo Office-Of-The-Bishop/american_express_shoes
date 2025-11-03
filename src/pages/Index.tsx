@@ -36,8 +36,19 @@ const Index = () => {
   const [shoes, setShoes] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen","Size"];
+  const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
   const redTabs = ["Sneakers", "Dress", "Sandals", "Boots","Sliders"];
+  const ghanaSizes = [
+  "40", "40.5", "41", "42", "42.5", "43", "44", "44.5", "45", "46", "46.5", "47.5",
+  "35", "35.5", "36", "37", "37.5", "38", "38.5", "39", "40", "40.5", "41", "42",
+  "32", "33", "34", "35", "37", "38",
+  "36", "37", "37.5", "38", "39", "40"
+];
+const [selectedSize, setSelectedSize] = useState<string>("");
+
+
+
+  
 
   // ✅ Fetch products
   useEffect(() => {
@@ -115,8 +126,10 @@ const filteredProducts = apiProducts.filter((product: any) => {
           product.shoeStatus.some((s: string) => s.toLowerCase() === localSelection))
       : true;
 
-  // ✅ If no search term, just apply tab filter
-  if (!search) return matchesTab;
+  // ✅ Filter by selected size
+  const matchesSize = selectedSize
+    ? product.GhanaianSize?.includes(selectedSize)
+    : true;
 
   // ✅ Flatten all product values (arrays → joined text)
   const allValues = Object.values(product)
@@ -128,10 +141,11 @@ const filteredProducts = apiProducts.filter((product: any) => {
     .join(" ");
 
   // ✅ Check if search term exists anywhere in the product
-  const matchesSearch = allValues.includes(search);
+  const matchesSearch = !search || allValues.includes(search);
 
-  return matchesTab && matchesSearch;
+  return matchesTab && matchesSearch && matchesSize;
 });
+
 
 
   const handleProductClick = (product: Product) => {
@@ -151,36 +165,175 @@ const filteredProducts = apiProducts.filter((product: any) => {
     <div className="min-h-screen bg-background">
 
       {/* ✅ Inline Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-black/10 bg-white backdrop-blur">
-        <div className="mx-auto max-w-7xl px-3 sm:px-6">
-          <div className="flex h-16 items-center justify-between">
-            {/* Logo */}
-            <a
-              href="#product"
-              onClick={() => {
-                localStorage.removeItem("selected");        // clear item
-                localStorage.setItem("scrollTo", "#products"); // remember section to scroll
-                window.location.reload();                    // refresh the page
-              }}
-              className="flex items-center gap-2 shrink-0"
-              aria-label="Home"
-            >
-              <img
-                src={logo}
-                alt="American Shoe Express"
-                className="w-24 h-16 absolute left-[7%]"
-              />
-            </a>
+      {/* ✅ Inline Navbar */}
+{/* ✅ Inline Navbar */}
+<nav className="sticky top-0 z-50 border-b border-black/10 bg-white backdrop-blur">
+  <div className="mx-auto max-w-7xl px-3 sm:px-6">
+    <div className="flex h-16 items-center justify-between">
+      {/* Logo */}
+      <a
+        href="#product"
+        onClick={() => {
+          localStorage.removeItem("selected");
+          localStorage.setItem("scrollTo", "#products");
+          window.location.reload();
+        }}
+        className="flex items-center gap-2 shrink-0 mr-[30px]"
+        aria-label="Home"
+      >
+        <img
+          src={logo}
+          alt="American Shoe Express"
+          className="w-24 h-16"
+        />
+      </a>
+
+      {/* Desktop Tabs (hidden md) */}
+      <div className="hidden lg:flex items-center gap-6 flex-1 justify-center text-sm font-medium">
+        {[...blackTabs].map((tab) => (
+          <a
+            key={tab}
+            href="#products"
+            onClick={() => handleTabClick(tab)}
+            className={`px-2 py-1 rounded transition-all duration-150 ${
+              activeTab === tab ? "underline underline-offset-4 font-semibold" : ""
+            } ${
+              blackTabs.includes(tab)
+                ? "text-black hover:text-gray-700"
+                : "text-red-700 hover:text-red-500"
+            }`}
+          >
+            {tab}
+          </a>
+          
+        ))}
+        <div>
+         {/* <label for="size-select" className="block mb-1 font-medium">Size</label> */}
+          <select
+            id="size-select"
+            name="size"
+            className="border rounded px-3 py-2 w-32"
+            value={selectedSize}
+            onChange={(e) => setSelectedSize(e.target.value)}
+          >
+            <option value="">Size</option>
+            {ghanaSizes.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
 
 
-            {/* Center Tabs (Desktop) */}
-            <div className="hidden md:flex items-center gap-6 flex-1 justify-center text-sm font-medium">
-              {[...blackTabs, ...redTabs].map((tab) => (
+        </div>
+        {[...redTabs].map((tab) => (
+          <a
+            key={tab}
+            href="#products"
+            onClick={() => handleTabClick(tab)}
+            className={`px-2 py-1 rounded transition-all duration-150 ${
+              activeTab === tab ? "underline underline-offset-4 font-semibold" : ""
+            } ${
+              blackTabs.includes(tab)
+                ? "text-black hover:text-gray-700"
+                : "text-red-700 hover:text-red-500"
+            }`}
+          >
+            {tab}
+          </a>
+          
+        ))}
+      </div>
+
+      {/* Right Side */}
+      <div className="flex items-center gap-4">
+        {/* Search input (desktop only) */}
+        <input
+          type="search"
+          placeholder="Search..."
+          className="hidden lg:block h-10 w-60 rounded-lg border border-black/10 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+        
+            <select
+            id="size-select"
+            name="size"
+            className="border rounded px-3 py-2 w-32"
+            value={selectedSize}
+            onChange={(e) => setSelectedSize(e.target.value)}
+          >
+            <option value="">Size</option>
+            {ghanaSizes.map((item) => (
+              <option key={item} value={item}>{item}</option>
+            ))}
+          </select>
+          
+
+        {/* Cart Icon */}
+        <Button
+          variant="ghost"
+          size="icon"
+          className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
+          onClick={() => setCartOpen(true)}
+        >
+          <ShoppingCart />
+          {cart.length > 0 && (
+            <span className="absolute -top-1 -right-1 bg-[#b22234] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+              {cart.reduce((total, item) => total + item.quantity, 0)}
+            </span>
+          )}
+        </Button>
+
+        {/* Medium screens: breadcrumb / menu icon */}
+        <button
+          onClick={toggleMenu}
+          className="md:flex lg:hidden h-10 w-10 items-center justify-center rounded-md hover:bg-neutral-100 focus:outline-none"
+          aria-label="Toggle menu"
+        >
+          <svg
+            className="h-5 w-5"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth={2}
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            {menuOpen ? (
+              <path d="M18 6L6 18M6 6l12 12" />
+            ) : (
+              <>
+                <path d="M3 6h18" />
+                <path d="M3 12h18" />
+                <path d="M3 18h18" />
+              </>
+            )}
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    {/* Dropdown Menu for medium and small screens */}
+    {menuOpen && (
+      <div className="border-t border-black/10 bg-white md:block lg:hidden">
+        <div className="px-4 py-4 space-y-4">
+          <input
+            type="search"
+            placeholder="Search..."
+            className="w-full h-10 rounded-lg border border-black/10 bg-white px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+
+          <ul className="grid grid-cols-2 gap-3">
+            {[...blackTabs].map((tab) => (
+              <li key={tab}>
                 <a
-                  key={tab}
                   href="#products"
-                  onClick={() => handleTabClick(tab)}
-                  className={`px-2 py-1 rounded transition-all duration-150 ${
+                  onClick={() => {
+                    handleTabClick(tab);
+                    setMenuOpen(false);
+                  }}
+                  className={`block px-3 py-2 rounded text-sm font-medium text-center ${
                     activeTab === tab
                       ? "underline underline-offset-4 font-semibold"
                       : ""
@@ -192,138 +345,39 @@ const filteredProducts = apiProducts.filter((product: any) => {
                 >
                   {tab}
                 </a>
-              ))}
-            </div>
-
-            {/* Right Side (Desktop Search + Cart) */}
-            <div className="hidden md:flex items-center gap-4">
-              <input
-                type="search"
-                placeholder="Search..."
-                className="h-10 w-60 rounded-lg border border-black/10 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
-                  onClick={() => setCartOpen(true)}
+              </li>
+            ))}
+            
+            {[...redTabs].map((tab) => (
+              <li key={tab}>
+                <a
+                  href="#products"
+                  onClick={() => {
+                    handleTabClick(tab);
+                    setMenuOpen(false);
+                  }}
+                  className={`block px-3 py-2 rounded text-sm font-medium text-center ${
+                    activeTab === tab
+                      ? "underline underline-offset-4 font-semibold"
+                      : ""
+                  } ${
+                    blackTabs.includes(tab)
+                      ? "text-black hover:text-gray-700"
+                      : "text-red-700 hover:text-red-500"
+                  }`}
                 >
-                  <span className="text-sm font-medium">CART</span>
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
-                  onClick={() => setCartOpen(true)}
-                >
-                  <ShoppingCart />
-                  {cart.length > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-[#b22234] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {cart.reduce((total, item) => total + item.quantity, 0)}
-                    </span>
-                  )}
-                </Button>
-              </div>
-              <CartDrawer open={cartOpen} onOpenChange={setCartOpen} />
-            </div>
-
-            {/* Mobile Header: Cart + Menu */}
-            <div className="md:hidden flex items-center gap-4 justify-end pr-4">
-              {/* Mobile Cart */}
-              <Button
-                variant="ghost"
-                size="icon"
-                className="relative text-[#0f2942] hover:bg-[#0f2942]/10"
-                onClick={() => setCartOpen(true)}
-              >
-                <ShoppingCart />
-                {cart.length > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-[#b22234] text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cart.reduce((total, item) => total + item.quantity, 0)}
-                  </span>
-                )}
-              </Button>
-
-              {/* Mobile Menu Button */}
-              <button
-                onClick={toggleMenu}
-                className="inline-flex h-10 w-10 items-center justify-center rounded-md hover:bg-neutral-100 focus:outline-none"
-                aria-label="Toggle menu"
-              >
-                {menuOpen ? (
-                  <svg
-                    className="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M18 6L6 18M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg
-                    className="h-5 w-5"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <path d="M3 6h18M3 12h18M3 18h18" />
-                  </svg>
-                )}
-              </button>
-            </div>
-          </div>
+                  {tab}
+                </a>
+              </li>
+            ))}
+          </ul>
         </div>
+      </div>
+    )}
+  </div>
+</nav>
 
-        {/* Mobile Dropdown Menu */}
-        {menuOpen && (
-          <div className="md:hidden border-t border-black/10 bg-white">
-            <div className="px-4 py-4 space-y-4">
-              <input
-                type="search"
-                placeholder="Search..."
-                className="w-full h-10 rounded-lg border border-black/10 bg-white px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
 
-              <ul className="grid grid-cols-2 gap-3">
-                {[...blackTabs, ...redTabs].map((tab) => (
-                  <li key={tab}>
-                    <a
-                      href="#products"
-                      onClick={() => {
-                        handleTabClick(tab);
-                        setMenuOpen(false);
-                      }}
-                      className={`block px-3 py-2 rounded text-sm font-medium text-center ${
-                        activeTab === tab
-                          ? "underline underline-offset-4 font-semibold"
-                          : ""
-                      } ${
-                        blackTabs.includes(tab)
-                          ? "text-black hover:text-gray-700"
-                          : "text-red-700 hover:text-red-500"
-                      }`}
-                    >
-                      {tab}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        )}
-      </nav>
 
       {/* ✅ Hero Section */}
       <section className="relative overflow-hidden">
@@ -341,9 +395,8 @@ const filteredProducts = apiProducts.filter((product: any) => {
             </p>
           </div>
 
-          <div
-            className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 place-items-center px-4"
-          >
+          <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 place-items-center px-4">
+
             {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <ProductCard

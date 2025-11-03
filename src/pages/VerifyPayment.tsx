@@ -24,17 +24,16 @@ const PaymentCallback = () => {
         }
 
         const res = await axios.get(`/payment/verify/${reference}/${localStorage.getItem("order")}`);
+        console.log(res)
         if (res.data.success) {
-          // Place the order in your backend
-          // const orderResponse = await axios.post("/add-order", {...orderData, paymentStatus:"paid"});
-          if (res.data.success) {
+          
+          
             setStatus("✅ Payment successful! Your order has been placed.");
             localStorage.removeItem("order");
             localStorage.removeItem("reference");
-            localStorage.removeItem("ufo-burgers-cart")
-          } else {
-            setStatus("⚠️ Payment verified, but order placement failed.");
-          }
+            // localStorage.removeItem("ufo-burgers-cart")
+            console.log(res)
+          
         } else {
           setStatus("❌ Payment failed. Please try again.");
         }
