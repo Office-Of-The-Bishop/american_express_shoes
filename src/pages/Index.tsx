@@ -38,12 +38,27 @@ const Index = () => {
 
   const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
   const redTabs = ["Sneakers", "Dress", "Sandals", "Boots","Sliders"];
-  const ghanaSizes = [
-  "40", "40.5", "41", "42", "42.5", "43", "44", "44.5", "45", "46", "46.5", "47.5",
-  "35", "35.5", "36", "37", "37.5", "38", "38.5", "39", "40", "40.5", "41", "42",
-  "32", "33", "34", "35", "37", "38",
-  "36", "37", "37.5", "38", "39", "40"
+  
+
+const ghanaSizes = [
+  "32", "32.5",
+  "33", "33.5",
+  "34", "34.5",
+  "35", "35.5",
+  "36", "36.5",
+  "37", "37.5",
+  "38", "38.5",
+  "39", "39.5",
+  "40", "40.5",
+  "41", "41.5",
+  "42", "42.5",
+  "43", "43.5",
+  "44", "44.5",
+  "45", "45.5",
+  "46", "46.5",
+  "47"
 ];
+
 const [selectedSize, setSelectedSize] = useState<string>("");
 
 
@@ -575,9 +590,8 @@ const ContactForm = () => {
 };
 
 // ✅ Footer Component
-const Footer = ({handleTabClick}) => (
-<footer className="bg-[#d9d4d4] w-screen relative left-1/2 right-1/2 -translate-x-1/2 mb-4 mt-8">
-
+const Footer = ({ handleTabClick }) => (
+  <footer className="bg-[#d9d4d4] w-full mt-8">
     <div className="container mx-auto px-6 py-8">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 pb-6">
         <div className="md:col-span-1 lg:col-span-2 pt-4">
@@ -592,7 +606,7 @@ const Footer = ({handleTabClick}) => (
           <ul className="space-y-2 pt-10">
             {["Men", "Womens", "Unisex", "Children", "Teen"].map((link) => (
               <li key={link}>
-                <a href="#products" onClick={()=>{handleTabClick(link)}} className="text-black hover:text-gray-700 text-m">{link}</a>
+                <a href="#products" onClick={() => handleTabClick(link)} className="text-black hover:text-gray-700 text-m">{link}</a>
               </li>
             ))}
           </ul>
@@ -602,7 +616,7 @@ const Footer = ({handleTabClick}) => (
           <ul className="space-y-2 pt-10">
             {["Sneakers", "Dress", "Boots", "Sandals", "Sliders"].map((link) => (
               <li key={link}>
-                <a href="#products" onClick={()=>{handleTabClick(link)}} className="text-black hover:text-gray-700 text-m">{link}</a>
+                <a href="#products" onClick={() => handleTabClick(link)} className="text-black hover:text-gray-700 text-m">{link}</a>
               </li>
             ))}
           </ul>
@@ -612,13 +626,11 @@ const Footer = ({handleTabClick}) => (
           <ul className="space-y-2 pt-10">
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Facebook</a></li>
             <li><a href="#" className="text-black hover:text-gray-700 text-m">Instagram</a></li>
-            {/* <li><a href="#" className="text-black hover:text-gray-700 text-m">Disclaimer</a></li> */}
+
             <li>
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="text-black hover:text-gray-700 text-m">
-                    Disclaimer
-                  </button>
+                  <button className="text-black hover:text-gray-700 text-m">Disclaimer</button>
                 </DialogTrigger>
                 <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto p-6">
                   <DialogHeader>
@@ -626,43 +638,30 @@ const Footer = ({handleTabClick}) => (
                       American Shoe Express Disclaimer
                     </DialogTitle>
                   </DialogHeader>
-
                   <DisclaimerDialog />
                 </DialogContent>
               </Dialog>
             </li>
 
+            <li>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="text-black hover:text-gray-700 text-m">Size Chart</button>
+                </DialogTrigger>
+                <DialogContent className="max-w-2xl">
+                  <DialogHeader><DialogTitle>Size Chart</DialogTitle></DialogHeader>
+                  <img src={shoeSize} alt="Shoe Size Chart" className="w-full h-auto rounded-lg" />
+                </DialogContent>
+              </Dialog>
+            </li>
 
             <li>
               <Dialog>
                 <DialogTrigger asChild>
-                  <button className="text-black hover:text-gray-700 text-m">
-                    Size Chart
-                  </button>
-                </DialogTrigger>
-                <DialogContent className="max-w-2xl">
-                  <DialogHeader>
-                    <DialogTitle>Size Chart</DialogTitle>
-                  </DialogHeader>
-                  <img
-                    src={shoeSize}
-                    alt="Shoe Size Chart"
-                    className="w-full h-auto rounded-lg"
-                  />
-                </DialogContent>
-              </Dialog>
-            </li>
-            <li>
-              <Dialog>
-                <DialogTrigger asChild>
-                  <button className="text-black hover:text-gray-700 text-m">
-                    Contact Us
-                  </button>
+                  <button className="text-black hover:text-gray-700 text-m">Contact Us</button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
-                  <DialogHeader>
-                    <DialogTitle>Contact Us</DialogTitle>
-                  </DialogHeader>
+                  <DialogHeader><DialogTitle>Contact Us</DialogTitle></DialogHeader>
                   <ContactForm />
                 </DialogContent>
               </Dialog>
@@ -685,3 +684,4 @@ const Footer = ({handleTabClick}) => (
     </div>
   </footer>
 );
+
