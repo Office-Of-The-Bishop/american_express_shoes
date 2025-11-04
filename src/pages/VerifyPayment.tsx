@@ -23,7 +23,7 @@ const PaymentCallback = () => {
           return;
         }
 
-        const res = await axios.get(`/payment/verify/${reference}/${localStorage.getItem("order")}`);
+        const res = await axios.post(`/payment/verify/${reference}`,orderData);
         console.log(res)
         if (res.data.success) {
           
