@@ -39,6 +39,9 @@ const Index = () => {
   const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen"];
   const redTabs = ["Sneakers", "Dress", "Sandals", "Boots","Sliders"];
   
+  const [desktopHero, setDesktopHero] = useState<string | null>(null);
+  const [mobileHeroImg, setMobileHeroImg] = useState<string | null>(null);
+
 
 const ghanaSizes = [
   "32", "32.5",
@@ -79,6 +82,31 @@ const [selectedSize, setSelectedSize] = useState<string>("");
     };
     fetchShoes();
   }, []);
+
+  useEffect(() => {
+  const fetchHeroImages = async () => {
+    try {
+      const response = await axios.get("/all-hero-images");
+      const desktop = response?.data?.desktop ?? [];
+      const mobile = response?.data?.mobile ?? [];
+
+      // ✅ Take first image in each array (or choose logic if multiple)
+      if (desktop.length > 0) {
+        setDesktopHero(desktop[0].image);
+      }
+
+      if (mobile.length > 0) {
+        setMobileHeroImg(mobile[0].image);
+      }
+
+    } catch (error) {
+      console.error("Failed to fetch hero images", error);
+    }
+  };
+
+  fetchHeroImages();
+}, []);
+
   
 
   // ✅ Load active tab from localStorage
@@ -397,11 +425,29 @@ const filteredProducts = apiProducts.filter((product: any) => {
 
 
 
-      {/* ✅ Hero Section */}
+     
       <section className="relative overflow-hidden">
-        <img src={heroBanner} alt="Hero" className="hidden sm:block w-full h-auto" />
-        <img src={mobileHero} alt="Mobile Hero" className="block sm:hidden w-full h-auto" />
+        {desktopHero ? (
+          <img
+            src={desktopHero}
+            alt="Hero"
+            className="hidden sm:block w-full h-auto"
+          />
+        ) : (
+          <div className="hidden sm:block w-full h-[300px] bg-gray-200 animate-pulse" />
+        )}
+
+        {mobileHeroImg ? (
+          <img
+            src={mobileHeroImg}
+            alt="Mobile Hero"
+            className="block sm:hidden w-full h-auto"
+          />
+        ) : (
+          <div className="block sm:hidden w-full h-[300px] bg-gray-200 animate-pulse" />
+        )}
       </section>
+
 
       {/* ✅ Product Section */}
       <section id="products" className="relative mt-[40px] sm:pb-20 bg-muted/30">
