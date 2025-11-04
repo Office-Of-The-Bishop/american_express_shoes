@@ -189,7 +189,7 @@ const filteredProducts = apiProducts.filter((product: any) => {
       </a>
 
       {/* Desktop Tabs (hidden md) */}
-      <div className="hidden lg:flex items-center gap-6 flex-1 justify-center text-sm font-medium">
+      <div className="hidden lg:flex items-center gap-3 flex-1 justify-center text-sm font-medium">
         {[...blackTabs].map((tab) => (
           <a
             key={tab}
@@ -212,7 +212,7 @@ const filteredProducts = apiProducts.filter((product: any) => {
           <select
             id="size-select"
             name="size"
-            className="border rounded px-3 py-2 w-32"
+            className=" rounded px-3 py-2 w-13"
             value={selectedSize}
             
             onChange={(e) => setSelectedSize(e.target.value)}

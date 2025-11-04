@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { Trash2, MapPin, Clock } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Sheet,
@@ -29,6 +29,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   const navigate = useNavigate();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [location, setDeliveryLocation] = useState('');
 
   const handleCheckout = async (e: React.FormEvent) => {
@@ -43,6 +44,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
     const order = {
       name,
       phone,
+      email,
       items: cart,
       total,
       orderId,
@@ -57,7 +59,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
     localStorage.setItem("order", JSON.stringify(order));
 
     try {
-      const response = await axios.post("/initiate-payment", { email: "boxbreakerglobal@gmail.com", amount: order.total });
+      const response = await axios.post("/initiate-payment", { email, amount: order.total });
       const data = response.data;
       localStorage.setItem("reference", data.data.reference);
 
@@ -136,34 +138,22 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                   <form onSubmit={handleCheckout} className="space-y-4">
                     <div className="space-y-2">
                       <Label htmlFor="name">Full Name</Label>
-                      <Input
-                        id="name"
-                        value={name}
-                        onChange={(e) => setName(e.target.value)}
-                        required
-                      />
+                      <Input value={name} onChange={(e) => setName(e.target.value)} required />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="phone">Phone Number</Label>
-                      <Input
-                        id="phone"
-                        type="tel"
-                        value={phone}
-                        onChange={(e) => setPhone(e.target.value)}
-                        required
-                      />
+                      <Input type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} required />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email</Label>
+                      <Input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
                     </div>
 
                     <div className="space-y-2">
                       <Label htmlFor="deliveryLocation">Delivery Location</Label>
-                      <Input
-                        id="deliveryLocation"
-                        value={location}
-                        onChange={(e) => setDeliveryLocation(e.target.value)}
-                        placeholder="Enter your delivery address"
-                        required
-                      />
+                      <Input value={location} onChange={(e) => setDeliveryLocation(e.target.value)} required />
                     </div>
 
                     <div className="border-t pt-4 mt-4">
