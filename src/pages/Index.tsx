@@ -572,7 +572,8 @@ const ContactForm = () => {
 
 // ✅ Footer Component
 const Footer = ({handleTabClick}) => (
-  <footer className="bg-[#d9d4d4] w-full mx-4 mb-4 mt-8">
+<footer className="bg-[#d9d4d4] w-screen relative left-1/2 right-1/2 -translate-x-1/2 mb-4 mt-8">
+
     <div className="container mx-auto px-6 py-8">
       <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 pb-6">
         <div className="md:col-span-1 lg:col-span-2 pt-4">
