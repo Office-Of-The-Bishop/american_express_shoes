@@ -527,7 +527,7 @@ const DisclaimerDialog = () => {
 };
 // ✅ Contact Form
 const ContactForm = () => {
-  const [formData, setFormData] = useState({ name: "", phoneNumber: "", comment: "" });
+  const [formData, setFormData] = useState({ name: "", phoneNumber: "", comment: "" , email:""});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
@@ -540,7 +540,7 @@ const ContactForm = () => {
       const response = await axios.post("/add-message", formData);
       if(response.data.success){
         alert("Message sent successfully!");
-        setFormData({ name: "", phoneNumber: "", comment: "" });
+        setFormData({ name: "", phoneNumber: "", comment: "" , email:""});
       }
     } catch {
       alert("Failed to send message. Try again later.");
@@ -558,6 +558,10 @@ const ContactForm = () => {
       <div>
         <Label>Phone Number</Label>
         <Input name="phoneNumber" value={formData.phoneNumber} onChange={handleChange} required />
+      </div>
+      <div>
+        <Label>Email</Label>
+        <Input name="email" value={formData.email} onChange={handleChange} required />
       </div>
       <div>
         <Label>Comment</Label>
