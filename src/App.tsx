@@ -15,7 +15,7 @@ import axios from "axios"
 
 const queryClient = new QueryClient();
 
-axios.defaults.baseURL="https://americanexpress-shoes-backend.onrender.com/api/v1"
+axios.defaults.baseURL="https://americanexpress-shoes-backend-2m38.onrender.com/api/v1"
 
 
 
