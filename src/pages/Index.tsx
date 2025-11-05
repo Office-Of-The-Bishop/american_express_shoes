@@ -126,7 +126,7 @@ const [selectedSize, setSelectedSize] = useState<string>("");
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
   const apiProducts = shoes.map((item: any, index: number) => ({
-    id: `${item?.name ?? "item"}-${index}`,
+    id: item._id,
     name: item?.name,
     description: item?.description,
     images: item?.images,
