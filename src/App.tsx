@@ -12,10 +12,12 @@ import PaymentCallback from "./pages/VerifyPayment";
 import Disclaimer from "./pages/Disclaimer";
 
 import axios from "axios"
+import PaystackCheckout from "./pages/paystack";
 
 const queryClient = new QueryClient();
 
-axios.defaults.baseURL="https://americanexpress-shoes-backend-2.onrender.com/api/v1"
+// axios.defaults.baseURL="https://americanexpress-shoes-backend-1.onrender.com/api/v1"
+axios.defaults.baseURL='https://test1.damionbennett.org/api/v1'
 
 
 
@@ -32,6 +34,7 @@ const App = () => (
             <Route path="/auth" element={<Auth />} />
             <Route path="/verify-payment" element={<PaymentCallback />} />
             <Route path="/disclaimer" element={<Disclaimer/>}/>
+            <Route path="/pay" element={<PaystackCheckout />} />
 
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />

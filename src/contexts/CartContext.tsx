@@ -2,7 +2,7 @@ import { createContext, useState, useEffect, ReactNode } from 'react';
 import { CartItem, Product } from '@/types/product';
 
 interface CartContextType {
-  cart: CartItem[];
+  cart: { id: string, items: any[] };
   addToCart: (product: Product) => void;
   removeFromCart: (productId: string) => void;
   updateQuantity: (productId: string, quantity: number) => void;
@@ -13,7 +13,7 @@ interface CartContextType {
 export const CartContext = createContext<CartContextType | undefined>(undefined);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [cart, setCart] = useState<CartItem[]>([]);
+  const [cart, setCart] = useState<any>({});
 
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -59,10 +59,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     saveCart([]);
   };
 
-  const total = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const total = Array.isArray(cart.items) ? cart.items.reduce((sum, item) => sum + item.shoe.cost * item.quantity, 0) : 0;
 
   return (
-    <CartContext.Provider value={{ cart, addToCart, removeFromCart, updateQuantity, clearCart, total }}>
+    <CartContext.Provider value={{ cart, addToCart,saveCart, removeFromCart, updateQuantity, clearCart, total }}>
       {children}
     </CartContext.Provider>
   );

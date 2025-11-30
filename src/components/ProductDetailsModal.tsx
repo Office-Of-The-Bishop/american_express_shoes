@@ -86,7 +86,7 @@ export const ProductDetailsModal = ({
             <div className="space-y-2 border-t pt-2">
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Item Number:</span>
-                <span className="text-sm text-muted-foreground">{product.itemNumber}</span>
+                <span className="text-sm text-muted-foreground">{product.item_number}</span>
               </div>
 
               <div className="flex items-center justify-between py-2 border-b">
@@ -106,12 +106,12 @@ export const ProductDetailsModal = ({
 
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Ghanaian Size:</span>
-                <span className="text-sm text-muted-foreground">{product.GhanaianSize}</span>
+                <span className="text-sm text-muted-foreground">{product.ghanaian_size}</span>
               </div>
 
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Retail Cost:</span>
-                <span className="text-sm text-muted-foreground">₵{product.retailCost}</span>
+                <span className="text-sm text-muted-foreground">₵{product.retail_cost}</span>
               </div>
 
               <div className="flex items-center justify-between py-2 border-b">
@@ -122,9 +122,9 @@ export const ProductDetailsModal = ({
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Shoe Status:</span>
                 <span className="text-sm text-muted-foreground">
-                  {Array.isArray(product.shoeStatus)
-                    ? product.shoeStatus.join(", ")
-                    : product.shoeStatus}
+                  {Array.isArray(product.shoe_status)
+                    ? product.shoe_status.join(", ")
+                    : product.shoe_status}
                 </span>
               </div>
 

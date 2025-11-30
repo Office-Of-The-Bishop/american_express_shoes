@@ -9,6 +9,7 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { getImageUrl } from '@/lib/utils';
 
 export default function Cart() {
   const { cart, updateQuantity, removeFromCart, total, clearCart } = useCart();
@@ -68,7 +69,7 @@ export default function Cart() {
                     <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
                       {item.images.length>=1 && (
                         <img 
-                          src={item.images[0]} 
+                          src={getImageUrl(item.images[0])} 
                           alt={item.name}
                           className="w-full sm:w-24 h-48 sm:h-24 object-cover rounded"
                         />

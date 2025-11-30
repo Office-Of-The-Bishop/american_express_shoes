@@ -3,6 +3,7 @@ import { Product } from '@/types/product';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getImageUrl } from '@/lib/utils';
 
 interface ProductCardProps {
   product: Product;
@@ -16,8 +17,8 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
 
   const retailPrice = product.price ? Math.round(product.price / 0.77) : 0;
   const discountPercentage =
-    product.price && product.retailCost
-      ? Math.round(((Number(product.retailCost) - product.price) / Number(product.retailCost)) * 100)
+    product.price && product.retail_cost
+      ? Math.round(((Number(product.retail_cost) - product.price) / Number(product.retail_cost)) * 100)
       : 0;
 
   const nextImage = () => {
@@ -37,12 +38,12 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
   };
 
   return (
-    <Card className="hover:shadow-lg transition-shadow bg-white border-solid border-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
+    <Card onClick={() => onProductClick(product)} className="hover:shadow-lg transition-shadow bg-white border-solid border-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
       {/* Image Carousel Section */}
       {images.length > 0 && (
-        <div className="relative aspect-square overflow-hidden bg-white">
+        <div onClick={(e)=>{e.stopPropagation()}} className="relative aspect-square overflow-hidden bg-white">
           <img
-            src={images[currentImageIndex]}
+            src={getImageUrl(images[currentImageIndex])}
             alt={product.name}
             className="w-full h-full object-cover"
           />
@@ -75,7 +76,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
 
           {/* Image Dots Indicator */}
           {hasMultipleImages && (
-            <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+            <div onClick={(e)=>{e.stopPropagation()}} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
               {images.map((_, index) => (
                 <button
                   key={index}
@@ -108,12 +109,12 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
 
         {/* Item Number (slightly larger & bold) */}
         <h3 className="text-sm text-gray-700 font-semibold mb-2 tracking-wide">
-          {product.itemNumber}
+          {product.item_number}
         </h3>
 
         {/* Labels */}
         <div className="flex gap-2 flex-wrap mb-3">
-          {product.shoeStatus.map((item, i) => (
+          {product.shoe_status.map((item, i) => (
             <p
               key={i}
               className="bg-gray-200 px-1.5 py-0.5 text-xs font-semibold rounded"
@@ -130,17 +131,17 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
             </p>
           ))}
           <p className="bg-yellow-200 px-1.5 py-0.5 text-xs font-semibold rounded">
-            Size: <span className="ml-1">{product.GhanaianSize}</span>
+            Size: <span className="ml-1">{product.ghanaian_size}</span>
           </p>
         </div>
 
         {/* Pricing Information */}
         <div className="mb-3 space-y-1">
-          {Number(product.retailCost) > product.price && (
+          {Number(product.retail_cost) > product.price && (
             <div className="flex gap-1">
               <p className="text-sm text-gray-500">Retail Price:</p>
               <p className="text-sm text-gray-500 line-through">
-                GHS {product.retailCost}
+                GHS {product.retail_cost}
               </p>
             </div>
           )}

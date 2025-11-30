@@ -8,10 +8,10 @@ export interface Product {
   gender: [string];
   shoeType: [string];
   AmericanSize:String;
-  GhanaianSize:String;
-  retailCost:String,
-  shoeStatus:[String],
-  itemNumber:String
+  ghanaian_size:String;
+  retail_cost:String,
+  shoe_status:[String],
+  item_number:String
 
 }
 

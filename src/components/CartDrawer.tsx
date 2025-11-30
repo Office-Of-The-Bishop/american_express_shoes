@@ -6,7 +6,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
-import { Trash2 } from 'lucide-react';
+import { LoaderCircle, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   Sheet,
@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/sheet';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import axios from 'axios';
+import { getCartId, getImageUrl } from '@/lib/utils';
 
 interface CartDrawerProps {
   open: boolean;
@@ -23,20 +24,25 @@ interface CartDrawerProps {
 }
 
 export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
-  const { cart, removeFromCart, total, clearCart } = useCart();
+  const { cart, removeFromCart, total, clearCart, saveCart } = useCart();
   const { user } = useAuth();
   const { toast } = useToast();
   const navigate = useNavigate();
   const [name, setName] = useState(user?.name || '');
   const [phone, setPhone] = useState('');
+  const [loading, setIsloading] = useState(false);
   const [email, setEmail] = useState('');
   const [location, setDeliveryLocation] = useState('');
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (cart.length === 0) {
+    if (!Array.isArray(cart.items)) {
       toast({ title: "Cart is empty", variant: "destructive" });
+      return;
+    }
+    if (cart.items.length === 0) {
+      toast({ title: "Cart is empty.", variant: "destructive" });
       return;
     }
 
@@ -55,43 +61,56 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
 
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
     orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
+    // localStorage.setItem('orders', JSON.stringify(orders));
     localStorage.setItem("order", JSON.stringify(order));
 
     try {
-      const response = await axios.post("/initiate-payment", { email, amount: order.total });
+      setIsloading(true)
+      const response = await axios.post("/initiate-payment/" + getCartId(), order).finally(() => { setIsloading(false) });
       const data = response.data;
+      if (data.status != 'success') {
+        return
+      }
       localStorage.setItem("reference", data.data.reference);
-
+      // clearCart();
       if (data.status && data.data.authorization_url) {
-        window.location.href = data.data.authorization_url;
+        // window.location.href = data.data.authorization_url;
+        navigate('/pay?access_code=' + data.data['access_code'] + '&ref=' + data.data['reference']);
+
       } else {
         alert("Payment initialization failed");
       }
+
     } catch {
       alert("Failed to initiate payment. Please try again.");
     }
 
-    clearCart();
-    toast({ title: "Order placed successfully!", description: `Order ID: ${orderId}` });
+
+    toast({ title: "Placing order", description: `Order ID: ${orderId}` });
     onOpenChange(false);
-    navigate('/');
   };
 
+
+  const handleRemoveFromCart = async (id) => {
+    return await axios.delete('/cart/' + id + '/' + getCartId()).then((res) => {
+
+      saveCart(res.data.cart)
+    })
+  }
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
       <SheetContent side="right" className="w-full sm:max-w-2xl flex flex-col p-0">
         <SheetHeader className="px-6 pt-6 pb-4 border-b">
           <SheetTitle>Shopping Cart</SheetTitle>
-          <p>
-            {cart.length === 0
+          {Array.isArray(cart.items) && <p>
+            {cart.items.length === 0
               ? "Your cart is empty"
-              : `${cart.length} item${cart.length > 1 ? 's' : ''} in your cart`}
-          </p>
+              : `${cart.items.length} item${cart.items.length > 1 ? 's' : ''} in your cart`}
+          </p>}
         </SheetHeader>
 
         <ScrollArea className="flex-1 px-6">
-          {cart.length === 0 ? (
+          {!Array.isArray(cart.items) || cart.items.length === 0 ? (
             <div className="py-12 text-center">
               <p className="text-muted-foreground mb-4">Your cart is empty</p>
               <Button onClick={() => onOpenChange(false)}>Continue Shopping</Button>
@@ -99,28 +118,28 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
           ) : (
             <div className="space-y-6 pb-4">
               <div className="space-y-4">
-                {cart.map((item, index) => (
-                  <Card key={item.id || item.name || index}>
+                {Array.isArray(cart.items) && cart.items.map((item, index) => (
+                  <Card key={item.shoe.id || item.shoe.name || index}>
                     <CardContent className="p-3 sm:p-4 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                      {item.images.length >= 1 && (
+                      {item.shoe.images.length >= 1 && (
                         <img
-                          src={item.images[0]}
-                          alt={item.name}
+                          src={getImageUrl(item.shoe.images[0])}
+                          alt={item.shoe.name}
                           className="w-full sm:w-24 h-48 sm:h-24 object-cover rounded"
                         />
                       )}
                       <div className="flex-1">
-                        <h3 className="font-semibold text-base sm:text-lg">{item.name}</h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground">{item.description}</p>
+                        <h3 className="font-semibold text-base sm:text-lg">{item.shoe.name}</h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground">{item.shoe.description}</p>
                         <p className="text-lg sm:text-xl font-bold text-accent mt-2">
-                          ₵{(item.price * item.quantity).toFixed(2)}
+                          ₵{(item.shoe.cost * item.quantity).toFixed(2)}
                         </p>
                       </div>
                       <div className="flex items-center justify-end">
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => removeFromCart(item.id || item.name)}
+                          onClick={() => handleRemoveFromCart(item.id)}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
@@ -161,9 +180,9 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         <span>Total</span>
                         <span className="text-accent">₵{total.toFixed(2)}</span>
                       </div>
-                      <Button type="submit" className="w-full" size="lg">
-                        Place Order
-                      </Button>
+                      {!loading ? <Button type="submit" className="w-full" size="lg">
+                        Place Order 
+                      </Button> : <LoaderCircle className="animate-spin mx-auto" size={30} />}
                     </div>
                   </form>
                 </CardContent>
