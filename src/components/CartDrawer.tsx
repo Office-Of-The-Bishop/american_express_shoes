@@ -36,6 +36,12 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
+    // toast({
+    //       title: "Error adding item",
+    //       description: `sadsa`,
+    //       style: { backgroundColor: "red", color: "white" },
+    //     });
+    //     return
 
     if (!Array.isArray(cart.items)) {
       toast({ title: "Cart is empty", variant: "destructive" });
@@ -69,7 +75,14 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
       const response = await axios.post("/initiate-payment/" + getCartId(), order).finally(() => { setIsloading(false) });
       const data = response.data;
       if (data.status != 'success') {
+        toast({
+          title: "Error adding item",
+          description: `${response.data.message}`,
+          style: { backgroundColor: "red", color: "white" },
+        });
         return
+      } else {
+        toast({ title: "Placing order", description: `Order ID: ${orderId}` });
       }
       localStorage.setItem("reference", data.data.reference);
       // clearCart();
@@ -79,14 +92,25 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
 
       } else {
         alert("Payment initialization failed");
+        toast({
+          title: "Error adding item",
+          description: `${response.data.message}`,
+          style: { backgroundColor: "red", color: "white" },
+        });
       }
 
-    } catch {
-      alert("Failed to initiate payment. Please try again.");
+    } catch (error) {
+      if (error.response)
+        // alert(`${error.response.data.message}`);
+        toast({
+          title: "Error adding item",
+          description: `${error.response.data.message}`,
+          style: { backgroundColor: "red", color: "white" },
+        });
     }
 
 
-    toast({ title: "Placing order", description: `Order ID: ${orderId}` });
+
     onOpenChange(false);
   };
 
@@ -181,7 +205,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         <span className="text-accent">₵{total.toFixed(2)}</span>
                       </div>
                       {!loading ? <Button type="submit" className="w-full" size="lg">
-                        Place Order 
+                        Place Order
                       </Button> : <LoaderCircle className="animate-spin mx-auto" size={30} />}
                     </div>
                   </form>

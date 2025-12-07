@@ -17,7 +17,8 @@ import PaystackCheckout from "./pages/paystack";
 const queryClient = new QueryClient();
 
 // axios.defaults.baseURL="https://americanexpress-shoes-backend-1.onrender.com/api/v1"
-axios.defaults.baseURL='https://test1.damionbennett.org/api/v1'
+axios.defaults.baseURL='https://americanshoeexpress.com/api/api/v1'
+// axios.defaults.baseURL='http://127.0.0.1:8000/api/v1'
 
 
 

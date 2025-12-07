@@ -14,6 +14,7 @@ import {
   CarouselPrevious,
 } from '@/components/ui/carousel';
 import { ShoppingCart } from 'lucide-react';
+import { getImageUrl } from '@/lib/utils';
 
 interface ProductDetailsModalProps {
   product: Product | null;
@@ -52,7 +53,7 @@ export const ProductDetailsModal = ({
                     <CarouselItem key={index}>
                       <div className="aspect-square overflow-hidden rounded-lg bg-muted">
                         <img
-                          src={image}
+                          src={getImageUrl(image)}
                           alt={`${product.name} - View ${index + 1}`}
                           className="w-full h-full object-cover"
                         />

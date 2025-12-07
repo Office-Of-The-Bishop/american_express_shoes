@@ -209,13 +209,29 @@ const Index = () => {
         setCartId(res.data.cart.id)
         saveCart(res.data.cart)
         // window.alert('succ')
+        toast({
+          title: "Added to cart",
+          description: `${product.name} has been added to your cart.`,
+        });
       }
+
+      else {
+        toast({
+          title: "Error adding item",
+          description: `${res.data.message}`,
+        });
+      }
+    }).catch((error) => {
+      console.log(error)
+      if (error.response)
+        toast({
+          title: "Error adding item",
+          description: `${error.response.data.message}`,
+          style: { backgroundColor: "red", color: "white" },
+        });
     })
     // addToCart(product);
-    toast({
-      title: "Added to cart",
-      description: `${product.name} has been added to your cart.`,
-    });
+
   };
 
   return (
