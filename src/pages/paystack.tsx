@@ -37,7 +37,7 @@ export default function PaystackCheckout() {
           await axios
             .get(`/paystack-callback?ref=${ref}`)
             .then((res) => {
-              if (res.data.status === "success") {
+              if (res.data.status === "success" || res.data.success) {
                  clearCart();
                  toast({ title: "Order placed successfully!" });
                 navigate("/");
