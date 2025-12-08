@@ -52,7 +52,7 @@ npm run build
 # Copy dist content to parent directory
 if [ -d dist ]; then
     echo -e "${BLUE}📂 Copying dist/ to ../ ${RESET}"
-    cp -r dist/* ../
+    cp -r ./dist/* ../
 else
     echo -e "${YELLOW}⚠️ dist/ directory not found, skipping copy ${RESET}"
 fi

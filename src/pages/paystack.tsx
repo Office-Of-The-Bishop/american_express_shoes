@@ -21,7 +21,7 @@ export default function PaystackCheckout() {
 
   const accessCode = getQueryParam("access_code");
   const ref = getQueryParam("ref");
-  const {clearCart,  } = useCart();
+  const { clearCart, } = useCart();
 
   useEffect(() => {
     const startPayment = async () => {
@@ -38,8 +38,8 @@ export default function PaystackCheckout() {
             .get(`/paystack-callback?ref=${ref}`)
             .then((res) => {
               if (res.data.status === "success" || res.data.success) {
-                 clearCart();
-                 toast({ title: "Order placed successfully!" });
+                clearCart();
+                toast({ title: "Order placed successfully!" });
                 navigate("/");
               }
             });
