@@ -8,6 +8,7 @@ import { useCart } from '@/hooks/useCart';
 import { useAuth } from '@/hooks/useAuth';
 import { LoaderCircle, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useEffect } from 'react';
 import {
   Sheet,
   SheetContent,
@@ -18,6 +19,13 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import axios from 'axios';
 import { getCartId, getImageUrl } from '@/lib/utils';
 
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 interface CartDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -33,6 +41,15 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
   const [loading, setIsloading] = useState(false);
   const [email, setEmail] = useState('');
   const [location, setDeliveryLocation] = useState('');
+  const [salesPerson, setSalePerson] = useState('');
+
+  const [orderSalesPeople, setOrderSalePerson] = useState([])
+  useEffect(() => {
+    axios.get('/sales-people').then(res => {
+      setOrderSalePerson(res.data)
+    })
+
+  }, []);
 
   const handleCheckout = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -63,6 +80,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
       date: new Date().toLocaleDateString().replace(/\//g, "-"),
       orderMode: 'delivery',
       location,
+      salesPerson
     };
 
     const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -198,6 +216,27 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                       <Label htmlFor="deliveryLocation">Delivery Location</Label>
                       <Input value={location} onChange={(e) => setDeliveryLocation(e.target.value)} required />
                     </div>
+
+                    <div className="space-y-2">
+                      <Label htmlFor="deliveryLocation">Sales Person</Label>
+                      <Select required
+                        onValueChange={(val) =>
+                          setSalePerson(val)
+                        }
+                        defaultValue={''}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* <SelectItem value="Pending">Pending</SelectItem> */}
+                          <SelectItem value="Not Applicable">Not Applicable</SelectItem>
+                          {orderSalesPeople.map(e=>  <SelectItem value={e.id+''}>{e.name}</SelectItem>)}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+
 
                     <div className="border-t pt-4 mt-4">
                       <div className="flex justify-between text-lg font-bold mb-4">
