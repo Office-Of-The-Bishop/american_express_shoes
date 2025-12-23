@@ -136,7 +136,7 @@ const Index = () => {
     shoeType: item?.type ?? ["Card"],
     quantity: item?.quantity ?? 0,
     shoe_status: item?.shoe_status ?? ["Brand New"],
-    AmericanSize: item?.size,
+    AmericanSize: item?.ghanaian_size,
     ghanaian_size: item?.ghanaian_size,
     retail_cost: item?.retail_cost,
     item_number: item?.item_number,
