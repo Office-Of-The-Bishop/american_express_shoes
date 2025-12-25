@@ -214,11 +214,13 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
 
                     <div className="space-y-2">
                       <Label htmlFor="deliveryLocation">Delivery Location</Label>
-                      <Input value={location} onChange={(e) => setDeliveryLocation(e.target.value)} required />
-                    </div>
-                     <p className=' py-5 block text-center text-md'>
+
+                      <p className=' py-5 block text-left text-md'>
                         We deliver shoes only through Yango Delivery Services. The customer is responsible for the delivery cost. After the order is confirmed, we will contact you to share the exact delivery cost based on your location, with all deliveries dispatched from our shipping location at Ashaley Botwe School Junction.
                       </p>
+                      <Input value={location} onChange={(e) => setDeliveryLocation(e.target.value)} required />
+                    </div>
+
 
                     <div className="space-y-2">
                       <Label htmlFor="deliveryLocation">Sales Person</Label>
@@ -234,7 +236,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         <SelectContent>
                           {/* <SelectItem value="Pending">Pending</SelectItem> */}
                           <SelectItem value="Not Applicable">Not Applicable</SelectItem>
-                          {orderSalesPeople.map(e=>  <SelectItem value={e.id+''}>{e.name}</SelectItem>)}
+                          {orderSalesPeople.map(e => <SelectItem value={e.id + ''}>{e.name}</SelectItem>)}
                         </SelectContent>
                       </Select>
                     </div>
@@ -246,7 +248,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         <span>Total</span>
                         <span className="text-accent">₵{total.toFixed(2)}</span>
                       </div>
-                     
+
                       {!loading ? <Button type="submit" className="w-full" size="lg">
                         Place Order
                       </Button> : <LoaderCircle className="animate-spin mx-auto" size={30} />}

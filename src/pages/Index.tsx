@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import logo from "../assets/American Shoe Logo - transparent.png";
 import ShoppingCart from "@/components/ShoppingCart";
 import { useCart } from "@/hooks/useCart";
@@ -24,6 +24,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { getCartId, getImageUrl, setCartId } from "@/lib/utils";
+import AllShoes from "@/components/allShoes";
+import { useNavigate } from "react-router-dom";
+import { products } from "@/data/products";
+import HomeImages from "@/components/homeImages";
+import { ProductImage } from "@/components/productImage";
+import { ProductImageModal } from "@/components/ProductImageModal";
 
 // ✅ Main Page
 const Index = () => {
@@ -36,12 +42,12 @@ const Index = () => {
   const [modalOpen, setModalOpen] = useState(false);
   const [shoes, setShoes] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
-
-  const blackTabs = ["Men", "Women", "Unisex", "Children", "Teen"];
+  const [selectedImg, setImg] = useState(null)
+  const blackTabs = ["Men", "Women", "Unisex", "Children", "Teen", "Girls", "Boys"];
   const redTabs = ["Sneakers", "Dress", "Sandals", "Boots", "Sliders"];
 
-  const [desktopHero, setDesktopHero] = useState<string | null>(null);
-  const [mobileHeroImg, setMobileHeroImg] = useState<string | null>(null);
+  const [desktopHero, setDesktopHero] = useState<any>(null);
+  const [mobileHeroImg, setMobileHeroImg] = useState<any>(null);
 
 
   const ghanaSizes = [
@@ -75,7 +81,23 @@ const Index = () => {
       try {
         const response = await axios.get("/all-shoes");
         const items = response?.data?.allItems ?? [];
-        setShoes(items);
+
+        const apiProducts = items.map((item: any, index: number) => ({
+          id: item.id,
+          name: item?.name,
+          description: item?.description,
+          images: item?.images,
+          price: item?.cost,
+          gender: item?.gender ?? ["Unisex"],
+          shoeType: item?.type ?? ["Card"],
+          quantity: item?.quantity ?? 0,
+          shoe_status: item?.shoe_status ?? ["Brand New"],
+          AmericanSize: item?.ghanaian_size,
+          ghanaian_size: item?.ghanaian_size,
+          retail_cost: item?.retail_cost,
+          item_number: item?.item_number,
+        }))
+        setShoes(apiProducts);
       } catch (error) {
         console.error("Failed to fetch shoes", error);
         setShoes([]);
@@ -87,17 +109,17 @@ const Index = () => {
   useEffect(() => {
     const fetchHeroImages = async () => {
       try {
-        const response = await axios.get("/all-hero-images");
+        const response = await axios.get("/get-media");
         const desktop = response?.data?.desktop ?? [];
         const mobile = response?.data?.mobile ?? [];
 
         // ✅ Take first image in each array (or choose logic if multiple)
         if (desktop.length > 0) {
-          setDesktopHero(desktop[0].image);
+          setDesktopHero(desktop);
         }
 
         if (mobile.length > 0) {
-          setMobileHeroImg(mobile[0].image);
+          setMobileHeroImg(mobile);
         }
 
       } catch (error) {
@@ -120,27 +142,14 @@ const Index = () => {
   const handleTabClick = (tabValue: string): void => {
     localStorage.setItem("selected", tabValue);
     setActiveTab(tabValue);
+    setSearchTerm(tabValue)
   };
 
 
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
-  const apiProducts = shoes.map((item: any, index: number) => ({
-    id: item.id,
-    name: item?.name,
-    description: item?.description,
-    images: item?.images,
-    price: item?.cost,
-    gender: item?.gender ?? ["Unisex"],
-    shoeType: item?.type ?? ["Card"],
-    quantity: item?.quantity ?? 0,
-    shoe_status: item?.shoe_status ?? ["Brand New"],
-    AmericanSize: item?.ghanaian_size,
-    ghanaian_size: item?.ghanaian_size,
-    retail_cost: item?.retail_cost,
-    item_number: item?.item_number,
-  }));
+
 
   useEffect(() => {
     const sectionId = localStorage.getItem("scrollTo");
@@ -153,47 +162,91 @@ const Index = () => {
     }
   }, []);
 
+
+
+
   // ✅ Filter products by tab & search term
   // ✅ Filter products by tab & search term (matches all fields)
-  const filteredProducts = apiProducts.filter((product: any) => {
-    const localSelection = localStorage.getItem("selected")?.toLowerCase();
-    const search = searchTerm.toLowerCase().trim();
+  const filteredProducts = useMemo(() => {
+    // window.alert('k')
+    return shoes.filter((product: any) => {
+      const localSelection = localStorage.getItem("selected")?.toLowerCase();
+      const search = searchTerm.toLowerCase().trim();
 
-    // ✅ Filter by selected tab
-    const matchesTab =
-      localSelection
-        ? (Array.isArray(product.gender) &&
-          product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
-        (Array.isArray(product.shoeType) &&
-          product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
-        (Array.isArray(product.shoe_status) &&
-          product.shoe_status.some((s: string) => s.toLowerCase() === localSelection))
+
+      // ✅ Filter by selected tab
+      const matchesTab =
+        localSelection
+          ? (Array.isArray(product.gender) &&
+            product.gender.some((g: string) => g.toLowerCase() === localSelection)) ||
+          (Array.isArray(product.shoeType) &&
+            product.shoeType.some((t: string) => t.toLowerCase() === localSelection)) ||
+          (Array.isArray(product.shoe_status) &&
+            product.shoe_status.some((s: string) => s.toLowerCase() === localSelection))
+          : true;
+
+      // ✅ Filter by selected size
+      const matchesSize = selectedSize
+        ? product.ghanaian_size?.includes(selectedSize)
         : true;
 
-    // ✅ Filter by selected size
-    const matchesSize = selectedSize
-      ? product.ghanaian_size?.includes(selectedSize)
-      : true;
+      // ✅ Flatten all product values (arrays → joined text)
+      const allValues = Object.values(product)
+        .map((val) => {
+          if (Array.isArray(val)) return val.join(" ").toLowerCase();
+          if (typeof val === "object" && val !== null) return JSON.stringify(val).toLowerCase();
+          return String(val).toLowerCase();
+        })
+        .join(" ");
 
-    // ✅ Flatten all product values (arrays → joined text)
-    const allValues = Object.values(product)
-      .map((val) => {
-        if (Array.isArray(val)) return val.join(" ").toLowerCase();
-        if (typeof val === "object" && val !== null) return JSON.stringify(val).toLowerCase();
-        return String(val).toLowerCase();
-      })
-      .join(" ");
+      // ✅ Check if search term exists anywhere in the product
+      const matchesSearch = !search || allValues.includes(search);
 
-    // ✅ Check if search term exists anywhere in the product
-    const matchesSearch = !search || allValues.includes(search);
+      return matchesTab && matchesSearch && matchesSize;
+    });
+  }, [shoes, searchTerm, selectedSize]);
 
-    return matchesTab && matchesSearch && matchesSize;
-  });
+  const shuffledProducts = useMemo(() => {
+    if (Array.isArray(filteredProducts)) return shuffleArray(filteredProducts);
+    return []
+  }, [filteredProducts]);
 
+
+  function shuffleArray(array) {
+    const shuffled = [...array]; // 👈 never mutate state
+    for (let i = shuffled.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+  }
+  const [productIdFromUrl, setProductIdFromUrl] = useState(null);
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    setProductIdFromUrl(params.get("product"));
+  }, []);
+
+  useEffect(() => {
+    if (!productIdFromUrl || !shoes.length) return;
+
+    const found = shuffledProducts.find(
+      p => String(p.id) == productIdFromUrl
+    );
+    // window.alert('power')
+    if (found) {
+      setSelectedProduct(found);
+      setModalOpen(true);
+    }
+  }, [productIdFromUrl, shoes]);
+
+
+  const navigate = useNavigate();
 
 
   const handleProductClick = (product: Product) => {
-    setSelectedProduct(product);
+    //setSelectedProduct(product);
+    setProductIdFromUrl(product.id);
+    navigate(`/?product=${product.id}`)
     setModalOpen(true);
   };
 
@@ -235,12 +288,11 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-
+    <div className="min-h-screen bg-background relative pt-16">
       {/* ✅ Inline Navbar */}
       {/* ✅ Inline Navbar */}
       {/* ✅ Inline Navbar */}
-      <nav className="sticky top-0 z-50 border-b border-black/10 bg-white backdrop-blur">
+      <nav className="fixed w-screen top-0 z-50 border-b border-black/10 bg-white backdrop-blur">
         <div className="mx-auto max-w-7xl px-3 sm:px-6">
           <div className="flex h-16 items-center justify-between">
             {/* Logo */}
@@ -259,10 +311,12 @@ const Index = () => {
                 alt="American Shoe Express"
                 className="w-24 h-16"
               />
+
             </a>
 
+
             {/* Desktop Tabs (hidden md) */}
-            <div className="hidden lg:flex items-center gap-3 flex-1 justify-center text-sm font-medium">
+            <div className="hidden xl:flex items-center gap-3 flex-1 justify-center text-sm font-medium">
               {[...blackTabs].map((tab) => (
                 <a
                   key={tab}
@@ -321,7 +375,7 @@ const Index = () => {
                 placeholder="Search..."
                 className="hidden lg:block h-10 w-60 rounded-lg border border-black/10 px-3 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                 value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
+                onChange={(e) => { setSearchTerm(e.target.value) }}
               />
 
 
@@ -345,7 +399,7 @@ const Index = () => {
               {/* Medium screens: breadcrumb / menu icon */}
               <button
                 onClick={toggleMenu}
-                className="md:flex lg:hidden h-10 w-10 items-center justify-center rounded-md hover:bg-neutral-100 focus:outline-none"
+                className="md:flex xl:hidden h-10 w-10 items-center justify-center rounded-md hover:bg-neutral-100 focus:outline-none"
                 aria-label="Toggle menu"
               >
                 <svg
@@ -373,7 +427,7 @@ const Index = () => {
 
           {/* Dropdown Menu for medium and small screens */}
           {menuOpen && (
-            <div className="border-t border-black/10 bg-white md:block lg:hidden">
+            <div className="border-t border-black/10 bg-white max-xl:block xl:hidden">
               <div className="px-4 py-4 space-y-4">
                 <input
                   type="search"
@@ -449,25 +503,24 @@ const Index = () => {
 
 
       <section className="relative overflow-hidden">
-        {desktopHero ? (
+        {desktopHero && Array.isArray(desktopHero) && <HomeImages className={"hidden sm:block"} media={desktopHero} />}
+        {mobileHeroImg && Array.isArray(mobileHero) && <HomeImages className={"block sm:hidden "} media={mobileHeroImg} />}
+        {/* 
+        {desktopHero && !Array.isArray(desktopHero) &&  (
           <img
             src={getImageUrl(desktopHero)}
             alt="Hero"
             className="hidden sm:block w-full h-auto"
           />
-        ) : (
-          <div className="hidden sm:block w-full h-[300px] bg-gray-200 animate-pulse" />
-        )}
+        ) }
 
-        {mobileHeroImg ? (
+        {mobileHeroImg && !Array.isArray(mobileHeroImg) && (
           <img
             src={getImageUrl(mobileHeroImg)}
             alt="Mobile Hero"
             className="block sm:hidden w-full h-auto"
           />
-        ) : (
-          <div className="block sm:hidden w-full h-[300px] bg-gray-200 animate-pulse" />
-        )}
+        )} */}
       </section>
 
 
@@ -483,7 +536,7 @@ const Index = () => {
 
           <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-1 lg:grid-cols-4 place-items-center px-4">
 
-            {filteredProducts.length > 0 ? (
+            {/* {filteredProducts.length > 0 ? (
               filteredProducts.map((product) => (
                 <ProductCard
                   key={product.id}
@@ -495,16 +548,20 @@ const Index = () => {
               <p className="col-span-full text-center text-gray-500">
                 No products found for this selection.
               </p>
-            )}
+            )} */}
+
           </div>
+          <AllShoes key={shuffledProducts.length} shoes={shuffledProducts} handleProductClick={handleProductClick} onSelectImage={(shoe) => { setImg(shoe) }} />
+          <ProductImageModal product={selectedImg} open={selectedImg !== null} onOpenChange={() => setImg(null)} />
         </div>
       </section>
 
       {/* ✅ Product Modal */}
-      <ProductDetailsModal
+      <ProductDetailsModal key={selectedProduct && selectedProduct.id}
         product={selectedProduct}
         open={modalOpen}
-        onOpenChange={setModalOpen}
+        selectedImage={(e) => setImg(e)}
+        onOpenChange={() => { setModalOpen(false); navigate('') }}
         onAddToCart={(selectedProduct) => handleAddToCart(selectedProduct)}
       />
 
@@ -672,7 +729,7 @@ const Footer = ({ handleTabClick }) => (
 
         <div className="md:col-span-1">
           <ul className="space-y-2 pt-10">
-            {["Men", "Women", "Unisex", "Children", "Teen"].map((link) => (
+            {["Men", "Women", "Unisex", "Children", "Teen", "Girls", "Boys"].map((link) => (
               <li key={link}>
                 <a href="#products" onClick={() => handleTabClick(link)} className="text-black hover:text-gray-700 text-m">{link}</a>
               </li>

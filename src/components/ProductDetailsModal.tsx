@@ -21,6 +21,7 @@ interface ProductDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddToCart: (product: Product) => void;
+  selectedImage:(p:Product)=>void
 }
 
 export const ProductDetailsModal = ({
@@ -28,6 +29,7 @@ export const ProductDetailsModal = ({
   open,
   onOpenChange,
   onAddToCart,
+  selectedImage
 }: ProductDetailsModalProps) => {
   if (!product) return null;
 
@@ -51,8 +53,8 @@ export const ProductDetailsModal = ({
                 <CarouselContent>
                   {product.images.map((image, index) => (
                     <CarouselItem key={index}>
-                      <div className="aspect-square overflow-hidden rounded-lg bg-muted">
-                        <img
+                      <div onClick={()=>selectedImage(product)} className="aspect-square overflow-hidden rounded-lg bg-muted">
+                        <img 
                           src={getImageUrl(image)}
                           alt={`${product.name} - View ${index + 1}`}
                           className="w-full h-full object-cover"
@@ -100,10 +102,10 @@ export const ProductDetailsModal = ({
                 <span className="text-sm text-muted-foreground">{product.shoeType}</span>
               </div>
 
-              <div className="flex items-center justify-between py-2 border-b">
+              {/* <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">American Size:</span>
                 <span className="text-sm text-muted-foreground">{product.AmericanSize}</span>
-              </div>
+              </div> */}
 
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Ghanaian Size:</span>

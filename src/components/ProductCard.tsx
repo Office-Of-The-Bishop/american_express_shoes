@@ -8,9 +8,11 @@ import { getImageUrl } from '@/lib/utils';
 interface ProductCardProps {
   product: Product;
   onProductClick: (product: Product) => void;
+  onSelectImage: (p: Product) => void
+  
 }
 
-export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
+export const ProductCard = ({ onSelectImage,product, onProductClick  }: ProductCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = product.images || [];
   const hasMultipleImages = images.length > 1;
@@ -38,11 +40,12 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
   };
 
   return (
-    <Card onClick={() => onProductClick(product)} className="hover:shadow-lg transition-shadow bg-white border-solid border-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
+    <Card onClick={() => onProductClick(product)} className="flex flex-col justify-between hover:shadow-lg transition-shadow bg-white border-solid border-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
       {/* Image Carousel Section */}
       {images.length > 0 && (
-        <div onClick={(e)=>{e.stopPropagation()}} className="relative aspect-square overflow-hidden bg-white">
+        <div onClick={(e) => { e.stopPropagation(); }} className="relative aspect-square overflow-hidden bg-white">
           <img
+            onClick={() => onSelectImage(product)}
             src={getImageUrl(images[currentImageIndex])}
             alt={product.name}
             className="w-full h-full object-cover"
@@ -76,7 +79,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
 
           {/* Image Dots Indicator */}
           {hasMultipleImages && (
-            <div onClick={(e)=>{e.stopPropagation()}} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
+            <div onClick={(e) => { e.stopPropagation() }} className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1.5">
               {images.map((_, index) => (
                 <button
                   key={index}
@@ -84,11 +87,10 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
                     e.stopPropagation();
                     goToImage(index);
                   }}
-                  className={`w-2 h-2 rounded-full transition-all ${
-                    index === currentImageIndex
+                  className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
                       ? 'bg-[#8B4513] w-2.5 h-2.5'
                       : 'bg-[#8B4513]/40'
-                  }`}
+                    }`}
                   aria-label={`Go to image ${index + 1}`}
                 />
               ))}
@@ -99,9 +101,9 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
 
       <CardContent className="p-4 bg-white">
         {/* Category */}
-       
+
         <p className="text-xs text-red-700 uppercase tracking-wider mb-2 font-medium flex gap-2 flex-wrap">
-         {product.gender.join(" / ")}
+          {product.gender.join(" / ")}
         </p>
 
         {/* Product Name */}
@@ -113,7 +115,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
         </h3>
 
         {/* Labels */}
-        <div className="flex gap-2 flex-wrap mb-3">
+        <div className="flex gap-2 flex-wrap mb-3 self-stretch justify-self-stretch">
           {product.shoe_status.map((item, i) => (
             <p
               key={i}
@@ -166,7 +168,7 @@ export const ProductCard = ({ product, onProductClick }: ProductCardProps) => {
         <Button
           onClick={() => onProductClick(product)}
           variant="outline"
-          className="w-full border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white uppercase font-medium"
+          className="w-full mt-auto border-[#8B4513] text-[#8B4513] hover:bg-[#8B4513] hover:text-white uppercase font-medium"
         >
           VIEW DETAILS
         </Button>

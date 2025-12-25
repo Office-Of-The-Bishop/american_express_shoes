@@ -12,6 +12,8 @@ export const getImageUrl = (name: string) => {
     const base = new URL(axios.defaults.baseURL as string).origin
     // window.alert(base)
     return base+'/api/storage/' + name
+    // return base+'/storage/' + name
+
   }
   console.log('img == ',name)
   return name
