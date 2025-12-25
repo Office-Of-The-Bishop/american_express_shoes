@@ -28,13 +28,21 @@ type Props = {
 
 export default function ShoePagination({
   shoes,
-  itemsPerPage = 8,
+  // itemsPerPage = 32,
   handleProductClick,
   onSelectImage
 }: Props) {
   const topRef = useRef<HTMLDivElement>(null)
   const [currentPage, setCurrentPage] = useState(1)
   // const[selectedForImage , setselectedForImageselectedForImage]= useState()
+  let itemsPerPage: number
+
+  if (window.innerWidth > 640) {
+    itemsPerPage = 32
+  } else {
+    itemsPerPage = 16
+  }
+  // window.alert(itemsPerPage)
   const totalPages = Math.ceil(shoes.length / itemsPerPage)
 
   const startIndex = (currentPage - 1) * itemsPerPage

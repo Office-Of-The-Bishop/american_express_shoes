@@ -43,7 +43,7 @@ const Index = () => {
   const [shoes, setShoes] = useState<any[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedImg, setImg] = useState(null)
-  const blackTabs = ["Men", "Women", "Unisex", "Children", "Teen", "Girls", "Boys"];
+  const blackTabs = ["Men", "Womens", "Unisex", "Children", "Teen", "Girls", "Boys"];
   const redTabs = ["Sneakers", "Dress", "Sandals", "Boots", "Sliders"];
 
   const [desktopHero, setDesktopHero] = useState<any>(null);
@@ -119,6 +119,7 @@ const Index = () => {
         }
 
         if (mobile.length > 0) {
+          // window.alert('ok')
           setMobileHeroImg(mobile);
         }
 
@@ -504,7 +505,8 @@ const Index = () => {
 
       <section className="relative overflow-hidden">
         {desktopHero && Array.isArray(desktopHero) && <HomeImages className={"hidden sm:block"} media={desktopHero} />}
-        {mobileHeroImg && Array.isArray(mobileHero) && <HomeImages className={"block sm:hidden "} media={mobileHeroImg} />}
+        {mobileHeroImg && Array.isArray(mobileHeroImg) && <HomeImages className={"block sm:hidden "} media={mobileHeroImg} />}
+
         {/* 
         {desktopHero && !Array.isArray(desktopHero) &&  (
           <img
@@ -729,7 +731,7 @@ const Footer = ({ handleTabClick }) => (
 
         <div className="md:col-span-1">
           <ul className="space-y-2 pt-10">
-            {["Men", "Women", "Unisex", "Children", "Teen", "Girls", "Boys"].map((link) => (
+            {["Men", "Womens", "Unisex", "Children", "Teen", "Girls", "Boys"].map((link) => (
               <li key={link}>
                 <a href="#products" onClick={() => handleTabClick(link)} className="text-black hover:text-gray-700 text-m">{link}</a>
               </li>
