@@ -802,7 +802,7 @@ const Footer = ({ handleTabClick }) => (
       <div className="text-center space-y-2">
         <div className="flex flex-col sm:flex-row justify-center items-center gap-2 text-gray-500 text-sm">
           <p>© American Shoe Express. All Rights Reserved 2023.</p>
-          <p>Telephone: +233 53 884 7703</p>
+          <p>Telephone: +233 53 884 7703 / +233 25 706 6801</p>
         </div>
         <p className="text-sm text-gray-500">
           All online payments are securely processed through Box Breaker Global's verified Paystack merchant account.

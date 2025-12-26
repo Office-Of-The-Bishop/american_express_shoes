@@ -26,6 +26,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { ComboboxDemo } from './ui/comboBox';
 interface CartDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -248,7 +249,7 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                         <span>Total</span>
                         <span className="text-accent">₵{total.toFixed(2)}</span>
                       </div>
-
+                        <ComboboxDemo/>
                       {!loading ? <Button type="submit" className="w-full" size="lg">
                         Place Order
                       </Button> : <LoaderCircle className="animate-spin mx-auto" size={30} />}
