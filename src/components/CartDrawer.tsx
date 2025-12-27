@@ -196,6 +196,10 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
                 <CardHeader>
                   <CardTitle>Delivery Information</CardTitle>
                 </CardHeader>
+
+                      <p className=' py-5 px-6 block text-left text-md'>
+                        We deliver shoes only through Yango Delivery Services. The customer is responsible for the delivery cost. After the order is confirmed, we will contact you to share the exact delivery cost based on your location, with all deliveries dispatched from our shipping location at Ashaley Botwe School Junction.
+                      </p>
                 <CardContent>
                   <form onSubmit={handleCheckout} className="space-y-4">
                     <div className="space-y-2">
@@ -215,10 +219,6 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
 
                     <div className="space-y-2">
                       <Label htmlFor="deliveryLocation">Delivery Location</Label>
-
-                      <p className=' py-5 block text-left text-md'>
-                        We deliver shoes only through Yango Delivery Services. The customer is responsible for the delivery cost. After the order is confirmed, we will contact you to share the exact delivery cost based on your location, with all deliveries dispatched from our shipping location at Ashaley Botwe School Junction.
-                      </p>
                       <Input value={location} onChange={(e) => setDeliveryLocation(e.target.value)} required />
                     </div>
 

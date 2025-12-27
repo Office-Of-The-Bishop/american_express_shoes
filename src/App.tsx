@@ -36,7 +36,6 @@ const App = () => (
             <Route path="/verify-payment" element={<PaymentCallback />} />
             <Route path="/disclaimer" element={<Disclaimer/>}/>
             <Route path="/pay" element={<PaystackCheckout />} />
-
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>
