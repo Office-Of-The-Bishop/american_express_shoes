@@ -9,10 +9,10 @@ interface ProductCardProps {
   product: Product;
   onProductClick: (product: Product) => void;
   onSelectImage: (p: Product) => void
-  
+
 }
 
-export const ProductCard = ({ onSelectImage,product, onProductClick  }: ProductCardProps) => {
+export const ProductCard = ({ onSelectImage, product, onProductClick }: ProductCardProps) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const images = product.images || [];
   const hasMultipleImages = images.length > 1;
@@ -38,12 +38,14 @@ export const ProductCard = ({ onSelectImage,product, onProductClick  }: ProductC
   const goToImage = (index: number) => {
     setCurrentImageIndex(index);
   };
-
   return (
     <Card onClick={() => onProductClick(product)} className="flex flex-col justify-between hover:shadow-lg transition-shadow bg-white border-solid border-black border-[2px] w-full sm:w-[250px] md:w-[300px] lg:w-[300px]">
       {/* Image Carousel Section */}
       {images.length > 0 && (
         <div onClick={(e) => { e.stopPropagation(); }} className="relative aspect-square overflow-hidden bg-white">
+          {product.quantity < 1 && <div className=' leading-none font-[900] !text-white absolute left-4 top-4 bg-red-600 tex-white rounded-full size-16 font-mono flex justify-center items-center text-center text-xl'>
+            SOLD <br /> OUT
+          </div>}
           <img
             onClick={() => onSelectImage(product)}
             src={getImageUrl(images[currentImageIndex])}
@@ -88,8 +90,8 @@ export const ProductCard = ({ onSelectImage,product, onProductClick  }: ProductC
                     goToImage(index);
                   }}
                   className={`w-2 h-2 rounded-full transition-all ${index === currentImageIndex
-                      ? 'bg-[#8B4513] w-2.5 h-2.5'
-                      : 'bg-[#8B4513]/40'
+                    ? 'bg-[#8B4513] w-2.5 h-2.5'
+                    : 'bg-[#8B4513]/40'
                     }`}
                   aria-label={`Go to image ${index + 1}`}
                 />
@@ -160,7 +162,7 @@ export const ProductCard = ({ onSelectImage,product, onProductClick  }: ProductC
             </span>
           )}
           <span className="px-2 py-1 text-xs font-medium bg-gray-200 text-black rounded">
-            Only {Number(product.quantity) || 0} Available
+           { product.quantity > 0 && 'Only'} {Number(product.quantity) || 0} Available
           </span>
         </div>
 

@@ -195,9 +195,9 @@ export const CartDrawer = ({ open, onOpenChange }: CartDrawerProps) => {
               <Card>
                 <CardHeader>
                   <CardTitle>Delivery Information</CardTitle>
-                </CardHeader>
+              </CardHeader>
 
-                      <p className=' py-5 px-6 block text-left text-md'>
+                      <p className=' pb-5 px-6 block text-left text-md'>
                         We deliver shoes only through Yango Delivery Services. The customer is responsible for the delivery cost. After the order is confirmed, we will contact you to share the exact delivery cost based on your location, with all deliveries dispatched from our shipping location at Ashaley Botwe School Junction.
                       </p>
                 <CardContent>

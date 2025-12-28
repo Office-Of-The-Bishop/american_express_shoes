@@ -148,7 +148,7 @@ const Index = () => {
 
 
 
-  const toggleMenu = () => setMenuOpen(!menuOpen);
+  const toggleMenu = () => { setMenuOpen(!menuOpen); setMobileSearch(false); };
 
 
 
@@ -287,6 +287,7 @@ const Index = () => {
     // addToCart(product);
 
   };
+  const [mobileSearch, setMobileSearch] = useState(false)
 
   return (
     <div className="min-h-screen bg-background relative pt-16">
@@ -433,12 +434,14 @@ const Index = () => {
                 <input
                   type="search"
                   placeholder="Search..."
+                  onFocus={() => setMobileSearch(true)}
+                  onBlur={() => {setMobileSearch(false);setMenuOpen(false)}}
                   className="w-full h-10 rounded-lg border border-black/10 bg-white px-4 text-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                 />
 
-                <ul className="grid grid-cols-2 gap-3">
+                <ul className={`grid grid-cols-2 gap-3  ${mobileSearch ? 'hidden' : '' }`}>
                   {[...blackTabs].map((tab) => (
                     <li key={tab}>
                       <a
@@ -446,6 +449,7 @@ const Index = () => {
                         onClick={() => {
                           handleTabClick(tab);
                           setMenuOpen(false);
+
                         }}
                         className={`block px-3 py-2 rounded text-sm font-medium text-center ${activeTab === tab
                           ? "underline underline-offset-4 font-semibold"
