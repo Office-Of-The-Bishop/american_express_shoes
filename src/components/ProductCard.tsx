@@ -43,8 +43,8 @@ export const ProductCard = ({ onSelectImage, product, onProductClick }: ProductC
       {/* Image Carousel Section */}
       {images.length > 0 && (
         <div onClick={(e) => { e.stopPropagation(); }} className="relative aspect-square overflow-hidden bg-white">
-          {product.quantity < 1 && <div className=' leading-none font-[900] !text-white absolute left-4 top-4 bg-red-600 tex-white rounded-full size-16 font-mono flex justify-center items-center text-center text-xl'>
-            SOLD <br /> OUT
+          {product.quantity < 1 && <div className=' leading-[0.2rem] font-[900] !text-white absolute left-1 top-1 bg-red-600 tex-white rounded-full size-24 font-mono flex justify-end pb-5  items-center text-center text-2xl stretch flex-col gap-0 '>
+            <span className='origin-end'>SOLD</span> <div className=' origin-end text-4xl'>OUT</div>
           </div>}
           <img
             onClick={() => onSelectImage(product)}
@@ -162,7 +162,7 @@ export const ProductCard = ({ onSelectImage, product, onProductClick }: ProductC
             </span>
           )}
           <span className="px-2 py-1 text-xs font-medium bg-gray-200 text-black rounded">
-           { product.quantity > 0 && 'Only'} {Number(product.quantity) || 0} Available
+            {product.quantity > 0 && 'Only'} {Number(product.quantity) > 0 ? Number(product.quantity) : 0} Available
           </span>
         </div>
 

@@ -21,7 +21,7 @@ interface ProductDetailsModalProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onAddToCart: (product: Product) => void;
-  selectedImage:(p:Product)=>void
+  selectedImage: (p: Product) => void
 }
 
 export const ProductDetailsModal = ({
@@ -53,8 +53,8 @@ export const ProductDetailsModal = ({
                 <CarouselContent>
                   {product.images.map((image, index) => (
                     <CarouselItem key={index}>
-                      <div onClick={()=>selectedImage(product)} className="aspect-square overflow-hidden rounded-lg bg-muted">
-                        <img 
+                      <div onClick={() => selectedImage(product)} className="aspect-square overflow-hidden rounded-lg bg-muted">
+                        <img
                           src={getImageUrl(image)}
                           alt={`${product.name} - View ${index + 1}`}
                           className="w-full h-full object-cover"
@@ -133,7 +133,7 @@ export const ProductDetailsModal = ({
 
               <div className="flex items-center justify-between py-2 border-b">
                 <span className="text-sm font-medium">Stock Available:</span>
-                <span className="text-sm text-muted-foreground">{product.quantity} units</span>
+                <span className="text-sm text-muted-foreground">{Number(product.quantity) > 0 ? product.quantity : 0} unit{product.quantity == 1 ? '' : 's'}</span>
               </div>
             </div>
 
@@ -141,10 +141,10 @@ export const ProductDetailsModal = ({
               onClick={handleAddToCart}
               size="lg"
               className="w-full mt-4"
-              disabled={product.quantity === 0}
+              disabled={product.quantity < 1}
             >
               <ShoppingCart className="h-5 w-5 mr-2" />
-              {product.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+              {product.quantity < 1 ? 'Out of Stock' : 'Add to Cart'}
             </Button>
           </div>
         </div>
